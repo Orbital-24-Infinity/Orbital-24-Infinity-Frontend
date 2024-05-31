@@ -1,12 +1,33 @@
 "use client";
 import React from "react";
+import { auth } from "@/app/firebase/config";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import AuthWrapper from "../AuthWrapper/AuthWrapper";
 
-interface LoginButtonProps {
-  handleLogin: () => void;
-}
+const LoginButton = () => {
+  const googleAuth = new GoogleAuthProvider();
+  const defaultRedirectPath = "/dashboard";
 
-const LoginButton = (props: LoginButtonProps) => {
-  return <button onClick={props.handleLogin}>Login</button>;
+  const handleLogin = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleAuth);
+      fetch("/api/new-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(result),
+      });
+    } catch (error) {
+      return;
+    }
+  };
+
+  return (
+    <AuthWrapper toRedirect redirectPath={defaultRedirectPath}>
+      <button onClick={handleLogin}>Login</button>
+    </AuthWrapper>
+  );
 };
 
 export default LoginButton;

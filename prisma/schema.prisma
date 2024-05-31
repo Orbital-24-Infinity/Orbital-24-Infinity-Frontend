@@ -1,0 +1,57 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Topic {
+  id            Int        @id @default(autoincrement()) @map(name: "topicid")
+  title         String
+  maxQuestions  Int // max number of questions, used to keep track when generating additional qns
+  files         File[]
+  questions     Question[]
+  user          User       @relation(fields: [userID], references: [id])
+  userID        Int
+}
+
+model User {
+  id            Int       @id @default(autoincrement()) @map(name: "userid")
+  email         String    @unique
+  lastLogin     DateTime  @default(now())
+  posts         Topic[]
+  @@map(name: "topics")
+}
+
+model File {
+  id        Int         @id @default(autoincrement()) @map(name: "fileid")
+  name      String
+  path      String      @unique
+  topicID   Int         @unique
+  topic     Topic       @relation(fields: [topicID], references: [id])
+}
+
+model Question {
+  id        Int                 @id @default(autoincrement()) @map(name: "questionid")
+  question  String
+  mrq       Boolean
+  openEnded Boolean
+  marked    Boolean
+  selected  Int
+  options   QuestionOptions[]
+  topicID   Int                 @unique
+  topic     Topic               @relation(fields: [topicID], references: [id])
+}
+
+model QuestionOptions {
+  id          Int         @id @default(autoincrement()) @map(name: "questionoptionid")
+  option      String
+  correct     Boolean
+  questionID  Int         @unique
+  question    Question    @relation(fields: [questionID], references: [id])
+}
