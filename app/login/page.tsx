@@ -3,7 +3,6 @@ import prisma from "@/lib/prisma";
 import LoginButton from "../firebase/LoginButton/LoginButton";
 import Heading from "./Heading";
 import Authenticate from "./Authenticate";
-import "./Heading.scss";
 
 const Login = async () => {
   return (
