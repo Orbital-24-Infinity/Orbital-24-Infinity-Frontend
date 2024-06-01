@@ -2,9 +2,9 @@
 
 Orbital 2024 Project for Team Infinity
 
-This project is [hosted on Vercel](https://orbital-24-infinity.vercel.app/login), running Next.js on frontend, Postgres for database, and Python for the AI part.
+This project is [hosted on Vercel](https://orbital-24-infinity-frontend-deployment.vercel.app/login), running Next.js on frontend, Postgres for database, and Python for the AI part.
 
-It is deployed on Vercel with [this](https://github.com/InfinityTwo/Orbital-24-Infinity-Frontend-Deployment) forked repository.
+It is deployed on Vercel with [this](https://github.com/Orbital6039/Orbital-24-Infinity-Frontend-Deployment) forked repository.
 
 ## Getting Started
 
