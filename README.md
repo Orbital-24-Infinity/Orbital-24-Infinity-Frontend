@@ -2,11 +2,23 @@
 
 Orbital 2024 Project for Team Infinity
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+This project is [hosted on Vercel](https://orbital-24-infinity.vercel.app/login), running Next.js on frontend, Postgres for database, and Python for the AI part.
 
 ## Getting Started
 
-First, run the development server:
+First, install the relevant dependencies and libraries using
+
+```bash
+yarn run install
+#or
+npm install
+```
+
+Secondly, edit the .env file with the appropriate values.
+>For live database .env variables, you will have to request it from me
+>Please deploy your own firebase and vercel app if you want to not edit live database
+
+Thirdly, run the development server:
 
 ```bash
 npm run dev
@@ -18,23 +30,18 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+If there is an update to the schema, run
+```bash
+npx prisma db push
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+For initial data, run
+```bash
+npx prisma studio
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+To edit the db with a GUI on localhost, run
+```bash
+npx prisma generate
+```
