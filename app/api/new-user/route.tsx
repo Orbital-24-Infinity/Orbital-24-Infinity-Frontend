@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+
 import prisma from "@/lib/prisma";
 
 const checkNewUser = async (email: string): Promise<boolean> => {

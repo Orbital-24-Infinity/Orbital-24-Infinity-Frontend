@@ -6,7 +6,7 @@ const nextConfig = {
   },
   sassOptions: {
     includePaths: ["./styles", "./app"],
-    prependData: `@import "Fonts.sass"`
+    prependData: `@import "./styles/Fonts.sass"`,
   },
 };
 

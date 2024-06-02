@@ -1,10 +1,12 @@
 "use client";
+import { GoogleAuthProvider,signInWithPopup } from "firebase/auth";
+import Image from "next/image";
 import React from "react";
+
 import { auth } from "@/app/firebase/config";
-import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
 import AuthWrapper from "../AuthWrapper";
 import styles from "./LoginButton.module.sass";
-import Image from "next/image";
 
 const LoginButton = () => {
   const googleAuth = new GoogleAuthProvider();

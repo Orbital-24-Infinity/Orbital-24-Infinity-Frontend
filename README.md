@@ -17,6 +17,7 @@ npm install
 ```
 
 ### Secondly, edit the .env file with the appropriate values.
+
 - For live Postgres database and Firebase .env variables, you will have to request it from me (owner).
 - For development purposes, please fork the repo and deploy your own Firebase (with Google Authentication) and Vercel app and fill in the variables yourself.
 
@@ -35,16 +36,19 @@ bun dev
 ## Deployment
 
 If there is an update to the schema, run
+
 ```bash
 npx prisma db push
 ```
 
 For initial data, run
+
 ```bash
 npx prisma studio
 ```
 
 To edit the db with a GUI on localhost, run
+
 ```bash
 npx prisma generate
 ```

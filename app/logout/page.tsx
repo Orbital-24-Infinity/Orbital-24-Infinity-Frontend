@@ -1,8 +1,9 @@
 "use client";
-import { auth } from "@/app/firebase/config";
-import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+
+import { auth } from "@/app/firebase/config";
 
 const Logout = () => {
   const router = useRouter();

@@ -1,7 +1,10 @@
-import React from "react";
-import AuthWrapper from "../../components/firebase-auth/AuthWrapper";
-import NavbarComponent from "@/components/navbar";
 import "../../styles/Dashboard.sass";
+
+import React from "react";
+
+import NavbarComponent from "@/components/navbar";
+
+import AuthWrapper from "../../components/firebase-auth/AuthWrapper";
 
 const DashboardComponent = () => {
   return (
