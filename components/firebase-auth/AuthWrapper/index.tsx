@@ -1,7 +1,8 @@
 "use client";
-import { auth } from "@/app/firebase/config";
-import { useAuthState } from "react-firebase-hooks/auth";
 import { redirect } from "next/navigation";
+import { useAuthState } from "react-firebase-hooks/auth";
+
+import { auth } from "@/app/firebase/config";
 
 interface AuthProps {
   children: React.ReactNode;
@@ -14,7 +15,6 @@ const AuthWrapper = ({
   toRedirect = false,
   redirectPath = "/",
 }: AuthProps) => {
-  
   const [user, loading, error] = useAuthState(auth);
   const userLoggedIn = user?.email;
 

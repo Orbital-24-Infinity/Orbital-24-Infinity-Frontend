@@ -1,34 +1,24 @@
-@tailwind base
-@tailwind components
-@tailwind utilities
-
 :root 
-  --foreground-rgb: 0, 0, 0
-  --background-start-rgb: 214, 219, 220
-  --background-end-rgb: 255, 255, 255
-  --background-buttons: 74, 74, 74 // To change for light
-  --background-buttons-highlight: 60, 60, 60 // To change for light
-
-
-@media (prefers-color-scheme: dark) 
-  :root 
-    --foreground-rgb: 255, 255, 255
-    --background-start-rgb: 0, 0, 0
-    --background-end-rgb: 30, 30, 30
-    --background-buttons: 74, 74, 74
-    --background-buttons-highlight: 60, 60, 60
-
+  --foreground-rgb: 255, 255, 255
+  --background-start-rgb: 0, 0, 0
+  --background-end-rgb: 30, 30, 30
+  --background-buttons: 74, 74, 74
+  --background-buttons-highlight: 60, 60, 60
 
 body 
   @extend .open-sans-default
   color: rgb(var(--foreground-rgb))
   background-color: rgb(var(--background-end-rgb))
   height: 100vh
+  width: 100vw
   margin: 0
 
+  *
+    text-decoration: none
+    outline: none
+    color: rgb(var(--foreground-rgb))
+    border: none
 
-@layer utilities 
-  .text-balance 
-    text-wrap: balance
-  
+  button
+    cursor: pointer
 

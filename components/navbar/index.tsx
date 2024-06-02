@@ -1,7 +1,9 @@
 "use client";
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
+
 import { auth } from "@/app/firebase/config";
+
 import LogoutButton from "../../components/firebase-auth/LogoutButton";
 import styles from "./Navbar.module.sass";
 
