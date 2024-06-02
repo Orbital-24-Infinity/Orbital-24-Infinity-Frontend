@@ -1,10 +1,18 @@
 import React from "react";
-import prisma from "@/lib/prisma";
-import LoginButton from "../firebase/LoginButton/LoginButton";
+import LoginButton from "../../components/firebase-auth/LoginButton";
+import Image from "next/image";
+import "../../styles/Login.sass";
 
 const Login = async () => {
   return (
-    <div>
+    <div className="loginComponent">
+      <Image
+        src="/Project Infinity.png"
+        alt="login-logo"
+        width={1144}
+        height={312}
+        className="loginBtn"
+      />
       <LoginButton />
     </div>
   );

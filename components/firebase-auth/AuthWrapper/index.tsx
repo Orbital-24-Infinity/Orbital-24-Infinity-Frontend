@@ -14,6 +14,7 @@ const AuthWrapper = ({
   toRedirect = false,
   redirectPath = "/",
 }: AuthProps) => {
+  
   const [user, loading, error] = useAuthState(auth);
   const userLoggedIn = user?.email;
 
