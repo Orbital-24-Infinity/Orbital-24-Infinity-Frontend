@@ -1,14 +1,18 @@
+@import "./styles/Fonts.sass"
+  
 :root 
   --foreground-rgb: 255, 255, 255
   --background-start-rgb: 0, 0, 0
-  --background-end-rgb: 30, 30, 30
-  --background-buttons: 74, 74, 74
-  --background-buttons-highlight: 60, 60, 60
+  --background-primary-rgb: 20, 20, 20
+  --background-secondary-rgb: 30, 30, 30
+  --background-secondary-highlight-rgb: 36, 36, 36
+  --background-buttons: 60, 60, 60
+  --background-buttons-highlight: 50, 50, 50
 
 body 
   @extend .open-sans-default
   color: rgb(var(--foreground-rgb))
-  background-color: rgb(var(--background-end-rgb))
+  background-color: rgb(var(--background-primary-rgb))
   height: 100vh
   width: 100vw
   margin: 0

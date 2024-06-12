@@ -4,18 +4,78 @@
   height: 100vh
   display: flex
   flex-flow: column
+
+.topicMainHeaderWrapper
+  position: absolute
+  margin-top: 7vh
+  width: 100%
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0) 0%, rgba(var(--background-primary-rgb), 1) 25%)
   
-.topicHeader
+.topicMainHeader
   @extend .noto-sans-default
   text-align: center
   font-size: 2em
   font-weight: 700
-  margin-top: 7.5vh
+  margin: 0 0 5vh 0
+
+.topics
+  overflow-y: scroll
+  margin: 10vh 0
+  padding: 50px 0
+
+.topic
+  background-color: rgb(var(--background-secondary-rgb))
+  padding: 30px 40px
+  border-radius: 15px
+  width: 75%
+  margin: 25px auto
+  transition: 0.2s ease
+  cursor: pointer
+
+  &:hover
+    background-color: rgb(var(--background-secondary-highlight-rgb))
+
+    .topicDelete
+      opacity: 1
+
+.topicHeader
+  display: flex
+  justify-content: space-between
+
+.topicName
+  @extend .noto-sans-default
+  font-size: 1.3em
+  color: white
+  background-color: transparent
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1)
+  transition: 0.15s ease
+  width: 80%
+
+  &:focus, &:active, &:hover
+    border-bottom: 1px solid white
+
+.topicDelete
+  opacity: 0
+  transition: 0.2s ease
+
+.topicFooter
+  padding-top: 25px
+
+.topicLastModified
+  color: rgba(255, 255, 255, 0.4)
+  text-align: right
+  font-size: 0.9em
+
+.newTopicWrapper
+  width: 100%
+  position: absolute
+  bottom: 0
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(var(--background-primary-rgb), 1) 25%)
 
 .newTopic
   @extend .default-button
   position: sticky
-  margin: auto auto 5vh auto
+  margin: 7vh auto 5vh auto
   display: flex
   width: max(400px, 25vw)
   justify-content: center
