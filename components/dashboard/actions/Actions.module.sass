@@ -1,0 +1,20 @@
+@import "./styles/Colours.sass"
+  
+.actionButtonsWrapper
+  display: flex
+  flex-wrap: wrap
+  
+.actionButtons
+  @extend .noto-sans-default
+  padding: 0.5em 1em
+  margin: auto 20px 5px 0
+  min-width: 125px
+  height: 45px
+  font-size: 0.75em
+  border: none
+  border-radius: 10px
+  background-color: $background-buttons
+  cursor: pointer
+  transition: 0.2s ease
+  &:hover
+    background-color: $background-buttons-highlight

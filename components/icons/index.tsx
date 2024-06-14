@@ -13,6 +13,7 @@ interface IconProps {
   colour?: string;
   hoverEffects?: boolean;
   className?: string;
+  onClick?: () => void;
 }
 
 const Icon = ({

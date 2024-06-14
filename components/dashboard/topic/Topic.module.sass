@@ -1,0 +1,51 @@
+@import "./styles/Colours.sass"
+  
+.topicHeader
+  display: flex
+  justify-content: space-between
+
+.topicDelete
+  opacity: 0
+  transition: 0.2s ease
+
+.topicDeleteButton
+  background-color: transparent
+  padding: 0
+
+.topicFooter
+  display: flex
+  justify-content: space-between
+  padding-top: 25px
+  flex-wrap: wrap
+
+.topicLastModified
+  color: rgba($foreground-rgb, 0.4)
+  text-align: right
+  font-size: 0.9em
+  margin-left: auto
+
+.topic
+  background-color: $background-secondary-rgb
+  padding: 30px 40px
+  border-radius: 15px
+  width: 75%
+  margin: 25px auto
+  transition: 0.2s ease
+
+  &:hover
+    background-color: $background-secondary-highlight-rgb
+
+    .topicDelete
+      opacity: 1
+  
+.topicName
+  @extend .noto-sans-default
+  font-size: 1.3em
+  color: $foreground-rgb
+  background-color: transparent
+  border-bottom: 1px solid rgba($foreground-rgb, 0.1)
+  transition: 0.15s ease
+  width: 80%
+
+  &:focus, &:active, &:hover
+    border-bottom: 1px solid $foreground-rgb
