@@ -27,7 +27,7 @@
 .topic
   background-color: $background-secondary-rgb
   padding: 30px 40px
-  border-radius: 15px
+  border-radius: 7.5px
   width: 75%
   margin: 25px auto
   transition: 0.2s ease
@@ -37,15 +37,22 @@
 
     .topicDelete
       opacity: 1
+
+    .topicName
+      border-bottom: 1px dotted rgba($foreground-rgb, 0.5)
   
 .topicName
   @extend .noto-sans-default
   font-size: 1.3em
   color: $foreground-rgb
   background-color: transparent
-  border-bottom: 1px solid rgba($foreground-rgb, 0.1)
   transition: 0.15s ease
   width: 80%
+  transition: 0.2s ease
+  border-bottom: 1px dotted rgba($foreground-rgb, 0)
 
-  &:focus, &:active, &:hover
-    border-bottom: 1px solid $foreground-rgb
+  &:hover
+    border-bottom: 1px solid rgba($foreground-rgb, 0.5)!important
+
+  &:focus, &:active
+    border-bottom: 1px solid $foreground-rgb!important

@@ -10,15 +10,17 @@ interface IPopupEvent {
 interface PopupProps {
   header: string;
   text: string;
-  placeholder?: string;
   accentColour?: string;
   accentColourSecondary?: string;
-  handleYes: (event: IPopupEvent) => void;
-  handleNo: (event: IPopupEvent) => void;
+  handleOption1: (event: IPopupEvent) => void;
+  handleOption2: (event: IPopupEvent) => void;
+  handleDefault?: (event: IPopupEvent) => void;
   option1Text?: string;
   option2Text?: string;
+  isOption1Underlined?: boolean;
+  isHeaderDisabled?: boolean;
+  isTextDisabled?: boolean;
   isDefaultOption1?: boolean;
-  isTextEditable?: boolean;
   style?: React.CSSProperties;
   children?: React.ReactNode;
 }
@@ -26,16 +28,18 @@ interface PopupProps {
 const Popup = ({
   header,
   text,
-  placeholder = "",
-  handleYes,
-  handleNo,
+  handleOption1,
+  handleOption2,
   accentColour = "rgb(255, 0, 0)",
   accentColourSecondary = "rgb(210, 0, 0)",
   option1Text = "Yes",
   option2Text = "No",
+  isHeaderDisabled = false,
+  isTextDisabled = false,
   isDefaultOption1 = false,
-  isTextEditable = false,
+  handleDefault = isDefaultOption1 ? handleOption1 : handleOption2,
   style = {},
+  isOption1Underlined = true,
   children,
 }: PopupProps) => {
   const [eventValue, setEventValue] = useState<IPopupEvent>({
@@ -46,33 +50,16 @@ const Popup = ({
     <div
       className={styles.popupWrapper}
       style={style}
-      onClick={(e) =>
-        isDefaultOption1 ? handleYes(eventValue) : handleNo(eventValue)
-      }
+      onClick={(e) => handleDefault(eventValue)}
     >
       <div
         className={styles.popup}
         style={{ border: `2px solid ${accentColour}` }}
         onClick={(e) => e.stopPropagation()}
       >
-        <p className={styles.header}>{header}</p>
+        {!isHeaderDisabled && <p className={styles.header}>{header}</p>}
 
-        {isTextEditable ? (
-          <input
-            value={eventValue.value}
-            className={`${styles.text} ${styles.editableText}`}
-            style={{
-              color: `${accentColour}`,
-              borderBottomColor: `${accentColour}`,
-            }}
-            onChange={(e) =>
-              setEventValue((prev) => {
-                return { ...prev, value: e.target.value };
-              })
-            }
-            placeholder={placeholder}
-          ></input>
-        ) : (
+        {!isTextDisabled && (
           <p className={styles.text} style={{ color: `${accentColour}` }}>
             {text}
           </p>
@@ -82,14 +69,20 @@ const Popup = ({
 
         <div className={styles.decisionButtons}>
           <button
-            onClick={(e) => handleYes(eventValue)}
+            onClick={(e) => handleOption1(eventValue)}
             className={styles.yes}
-            style={{ color: `${accentColourSecondary}` }}
+            style={{
+              color: `${accentColourSecondary}`,
+              textDecoration: isOption1Underlined ? "underline" : "none",
+            }}
           >
             {option1Text}
           </button>
 
-          <button onClick={(e) => handleNo(eventValue)} className={styles.no}>
+          <button
+            onClick={(e) => handleOption2(eventValue)}
+            className={styles.no}
+          >
             {option2Text}
           </button>
         </div>

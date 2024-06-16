@@ -1,3 +1,5 @@
+@import "./styles/Colours.sass"
+  
 .navbar
   position: absolute
   width: 100%
@@ -7,3 +9,13 @@
 
   *
     padding: 2em 3em
+
+.displayName
+  @extend .noto-sans-default
+  background-color: $background-primary-rgb
+  text-decoration: none
+  transition: 0.2s ease
+  cursor: pointer
+
+  &:hover
+    color: $foreground-secondary-rgb

@@ -9,8 +9,6 @@
   height: 100vh
   background-color: rgba($background-start-rgb, 0.9)
   z-index: 1000
-  transition: 0.2 ease
-  animation: fadeIn 0.1s ease
 
 .popup
   display: flex
@@ -23,8 +21,10 @@
   margin: auto
   padding: 20px
   border-radius: 15px
+  transition: 0.2 ease
+  animation: fadeIn 0.25s ease
 
-.header, .text, .editableText
+.header, .text
   $margin-distance: 40px
   $padding-distance: 30px
   @extend .noto-sans-default
@@ -40,23 +40,6 @@
     font-size: 1.6em
     padding-top: calc($padding-distance/2)
     margin: 0 $margin-distance
-
-  &.editableText
-    font-weight: 600
-    font-size: 1.4em
-    padding: calc($padding-distance/4) calc($padding-distance/2)
-    margin: calc($margin-distance/2) $margin-distance
-    border-bottom: 1px solid rgba($foreground-rgb, 0.1)
-    transition: 0.15s ease
-    background-color: transparent
-    opacity: 0.6
-
-    &:focus, &:active, &:hover
-      opacity: 1
-
-    &::placeholder
-      font-style: italic
-      font-size: 0.8em
 
 .decisionButtons
   display: flex
@@ -79,7 +62,6 @@
 .yes
   font-weight: 700
   background-color: transparent!important
-  text-decoration: underline
   &:hover, &:active
     opacity: 0.85
 

@@ -5,27 +5,27 @@ import Icon, { Icons } from "@/components/icons";
 import Popup from "@/components/popup";
 
 import ActionButton from "../actions";
-import { ITask, TaskStatus } from "./constants";
+import { ITopic, TopicStatus } from "./constants";
 import styles from "./Topic.module.sass";
 
-interface ITaskProps {
-  topic: ITask;
+interface ITopicProps {
+  topic: ITopic;
 }
 
 const getStatusColour = (status: string) => {
   switch (status) {
-    case TaskStatus.GENERATING:
+    case TopicStatus.GENERATING:
       return "#D66800";
-    case TaskStatus.COMPLETED:
+    case TopicStatus.COMPLETED:
       return "#14C514";
-    case TaskStatus.CREATED:
-      return "#9E18D3";
+    // case TopicStatus.CREATED:
+    //   return "#9E18D3";
     default:
       return "#D0DB2B";
   }
 };
 
-const Task = ({ topic }: ITaskProps) => {
+const Topic = ({ topic }: ITopicProps) => {
   const [isDeleteClicked, setIsDeleteClicked] = useState(false);
 
   return (
@@ -51,13 +51,13 @@ const Task = ({ topic }: ITaskProps) => {
 
       <p style={{ color: getStatusColour(topic.status) }}>
         {topic.status +
-          (topic.status === TaskStatus.ATTEMPTING
+          (topic.status === TopicStatus.ATTEMPTING
             ? " (" + topic.questionsAttempted + "/" + topic.questionsTotal + ")"
             : "")}
       </p>
 
       <div className={styles.topicFooter}>
-        <ActionButton type={topic.status} />
+        <ActionButton type={topic.status} id={topic.topicID} />
         <p className={styles.topicLastModified}>
           Last Modified: {topic.lastModified}
         </p>
@@ -67,8 +67,8 @@ const Task = ({ topic }: ITaskProps) => {
         <Popup
           header={"Are you sure you want to delete the following..."}
           text={topic.topicName}
-          handleYes={() => {}}
-          handleNo={() => setIsDeleteClicked(false)}
+          handleOption1={() => {}}
+          handleOption2={() => setIsDeleteClicked(false)}
           option1Text="Yes, destroy it now!"
           option2Text="No, I'll keep it for now"
         />
@@ -77,4 +77,4 @@ const Task = ({ topic }: ITaskProps) => {
   );
 };
 
-export default Task;
+export default Topic;

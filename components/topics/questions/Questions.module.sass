@@ -1,0 +1,47 @@
+@import "./styles/Buttons.sass"
+@import "./styles/Colours.sass"
+  
+.questionComponent
+  margin: 10vh 0
+  padding: 50px 0
+  text-align: left
+
+.questionNumber, .questionText
+  width: 50%
+  margin: 0 auto
+
+  &.questionNumber
+    font-size: 2.25em
+    font-weight: 700
+  
+  &.questionText
+    font-size: 1.6em
+    margin-top: 20px
+    font-weight: 500
+
+.questionOptions, .questionNavigationWrapper
+  display: flex
+  width: 50%
+  margin: 10vh auto
+  flex-wrap: wrap
+
+  &.questionOptions
+    flex-direction: column
+
+  &.questionNavigationWrapper
+    flex-direction: row
+    justify-content: space-between
+
+    button
+      @extend .default-button
+      min-width: min(250px, 10vw)
+
+    .nextQn
+      margin-left: auto
+
+.questionOption
+  @extend .default-button
+  background-color: $background-buttons
+  text-align: left
+  height: 80px
+  margin: 15px 0

@@ -1,4 +1,4 @@
-import { TaskStatus } from "@/components/dashboard/topic/constants";
+import { TopicStatus } from "@/components/dashboard/topic/constants";
 
 import styles from "./Actions.module.sass";
 import GenerateButton from "./generate";
@@ -6,7 +6,8 @@ import ManageButton from "./manage";
 import ViewButton from "./view";
 
 interface IActionButtonProps {
-  type: TaskStatus;
+  type: TopicStatus;
+  id: number;
 }
 
 interface IActionButtonWrapper {
@@ -17,29 +18,29 @@ const ActionButtonWrapper = ({ children }: IActionButtonWrapper) => {
   return <div className={styles.actionButtonsWrapper}>{children}</div>;
 };
 
-const ActionButton = ({ type }: IActionButtonProps) => {
+const ActionButton = ({ type, id }: IActionButtonProps) => {
   return {
-    [TaskStatus.CREATED]: (
-      <ActionButtonWrapper>
-        <ManageButton />
-      </ActionButtonWrapper>
-    ),
-    [TaskStatus.GENERATING]: (
+    // [TopicStatus.CREATED]: (
+    //   <ActionButtonWrapper>
+    //     <ManageButton />
+    //   </ActionButtonWrapper>
+    // ),
+    [TopicStatus.GENERATING]: (
       <ActionButtonWrapper>
         <></>
       </ActionButtonWrapper>
     ),
-    [TaskStatus.COMPLETED]: (
+    [TopicStatus.COMPLETED]: (
       <ActionButtonWrapper>
         <ManageButton />
-        <ViewButton />
+        <ViewButton id={id} />
         <GenerateButton />
       </ActionButtonWrapper>
     ),
-    [TaskStatus.ATTEMPTING]: (
+    [TopicStatus.ATTEMPTING]: (
       <ActionButtonWrapper>
         <ManageButton />
-        <ViewButton />
+        <ViewButton id={id} />
       </ActionButtonWrapper>
     ),
   }[type];
