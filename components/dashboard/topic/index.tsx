@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 
+import { auth } from "@/app/firebase/config";
 import Icon, { Icons } from "@/components/icons";
 import Popup from "@/components/popup";
 
@@ -10,6 +12,7 @@ import styles from "./Topic.module.sass";
 
 interface ITopicProps {
   topic: ITopic;
+  handleFetchTopics: () => void;
 }
 
 const getStatusColour = (status: string) => {
@@ -25,8 +28,9 @@ const getStatusColour = (status: string) => {
   }
 };
 
-const Topic = ({ topic }: ITopicProps) => {
+const Topic = ({ topic, handleFetchTopics }: ITopicProps) => {
   const [isDeleteClicked, setIsDeleteClicked] = useState(false);
+  const [user, loading, error] = useAuthState(auth);
 
   return (
     <div key={topic.topicID} className={styles.topic}>
@@ -67,7 +71,21 @@ const Topic = ({ topic }: ITopicProps) => {
         <Popup
           header={"Are you sure you want to delete the following..."}
           text={topic.topicName}
-          handleOption1={() => {}}
+          handleOption1={() => {
+            fetch("/api/delete-topic", {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                user: user,
+                topic: topic,
+              }),
+            }).then((res) => {
+              setIsDeleteClicked(false);
+              handleFetchTopics();
+            });
+          }}
           handleOption2={() => setIsDeleteClicked(false)}
           option1Text="Yes, destroy it now!"
           option2Text="No, I'll keep it for now"

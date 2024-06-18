@@ -1,7 +1,7 @@
 "use client";
-import { GoogleAuthProvider,signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import Image from "next/image";
-import React from "react";
+import React, { useContext } from "react";
 
 import { auth } from "@/app/firebase/config";
 

@@ -1,14 +1,24 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 
+import { auth } from "@/app/firebase/config";
 import Icon, { Icons } from "@/components/icons";
 import Popup from "@/components/popup";
 
 import styles from "./NewTopic.module.sass";
 
-const NewTopic = () => {
+interface NewTopicProps {
+  handleFetchTopics: () => any;
+}
+
+const NewTopic = ({ handleFetchTopics }: NewTopicProps) => {
   const accentColour = "#289497";
   const errorColour = "#FF0000";
+
+  const [user, loading, error] = useAuthState(auth);
+  const router = useRouter();
 
   const [isNewTopicOpen, setIsNewTopicOpen] = useState(false);
   const [isNewTopicDetailsOpen, setIsNewTopicDetailsOpen] = useState(false);
@@ -83,6 +93,29 @@ const NewTopic = () => {
           handleOption2={() => {
             if (trainingData.length < 250) {
               setHighlightColourTrainingData(errorColour);
+            } else {
+              const handleNewTopic = async () => {
+                try {
+                  return await fetch("/api/new-topic", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      user: user,
+                      topic: { data: trainingData, title: newTopicName },
+                    }),
+                  }).then((res) => {
+                    handleFetchTopics();
+                    setIsNewTopicDetailsOpen(false);
+                    setNewTopicName("");
+                    setTrainingData("");
+                  });
+                } catch (error) {
+                  return;
+                }
+              };
+              handleNewTopic();
             }
           }}
           handleDefault={() => setIsNewTopicDetailsOpen(false)}

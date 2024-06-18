@@ -13,17 +13,21 @@ datasource db {
 model Topic {
   id            Int        @id @default(autoincrement()) @map(name: "topicid")
   title         String
-  maxQuestions  Int // max number of questions, used to keep track when generating additional qns
+  maxQuestions  Int        @default(0) // max number of questions, used to keep track when generating additional qns
   files         File[]
-  questions     Question[]
+  questions     Question[] 
   user          User       @relation(fields: [userID], references: [id])
   userID        Int
+  lastModified  DateTime  @default(now())
+  data          String // the training data of min 250 characters
 }
 
 model User {
   id            Int       @id @default(autoincrement()) @map(name: "userid")
   email         String    @unique
   lastLogin     DateTime  @default(now())
+  authKey       String
+  authValidity  DateTime  @default(now())
   posts         Topic[]
   @@map(name: "topics")
 }
@@ -39,10 +43,10 @@ model File {
 model Question {
   id        Int                 @id @default(autoincrement()) @map(name: "questionid")
   question  String
-  mrq       Boolean
-  openEnded Boolean
-  marked    Boolean
-  selected  Int
+  mrq       Boolean             @default(false)
+  openEnded Boolean             @default(false)
+  marked    Boolean             @default(false)
+  selected  Int                 @default(-1)
   options   QuestionOptions[]
   topicID   Int                 @unique
   topic     Topic               @relation(fields: [topicID], references: [id])
