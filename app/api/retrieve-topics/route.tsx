@@ -1,12 +1,10 @@
 import { Prisma } from "@prisma/client";
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { ITopic, TopicStatus } from "@/components/dashboard/topic/constants";
 import prisma from "@/lib/prisma";
 
 import { checkValidRequest } from "../authentication/route";
-import { getDateNow } from "../new-user/route";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +25,7 @@ export async function POST(request: Request) {
       },
     });
   }
+  console.log(validReq);
   const status = await Promise.all(
     result.map((each) =>
       prisma.question.findMany({ where: { topicID: each.id } })
