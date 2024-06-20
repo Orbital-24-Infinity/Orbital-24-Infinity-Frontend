@@ -59,7 +59,8 @@ const Topic = ({ topic, setTopic, index, handleFetchTopics }: ITopicProps) => {
       }, 2500);
       return () => clearTimeout(autosaveTimeout);
     }
-  }, [topicNameLastEdited, topic, user, setTopic]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topicNameLastEdited]);
 
   return (
     <div key={topic.topicID} className={styles.topic}>
