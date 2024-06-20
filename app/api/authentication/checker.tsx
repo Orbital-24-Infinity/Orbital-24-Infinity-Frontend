@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { auth } from "@/lib/firebase-admin";
 import prisma from "@/lib/prisma";
 
-import { AUTH_VALIDITY_IN_DAYS } from "../login/constants";
+import { AUTH_VALIDITY_IN_DAYS } from "../constants";
 import { getDateNow } from "../login/date";
 
 export const checkValidRequest = async (email: string): Promise<boolean> => {
