@@ -29,7 +29,6 @@ model User {
   authKey       String
   authValidity  DateTime  @default(now())
   posts         Topic[]
-  @@map(name: "topics")
 }
 
 model File {

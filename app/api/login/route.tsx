@@ -12,18 +12,15 @@ import { getDateNow } from "./date";
 const dynamic = "force-dynamic";
 
 const checkNewUser = async (email: string): Promise<boolean> => {
-  return (
-    (
-      await prisma.user.findMany({
-        select: {
-          email: true,
-        },
-        where: {
-          email: email,
-        },
-      })
-    ).length === 0
-  );
+  const res = await prisma.user.findFirst({
+    select: {
+      email: true,
+    },
+    where: {
+      email: email,
+    },
+  });
+  return !res;
 };
 
 export async function POST(request: Request) {
@@ -42,14 +39,16 @@ export async function POST(request: Request) {
         customAuthValidity: newAuthValidity,
       });
     }
-
-    const newUser = await checkNewUser(req.email);
+    const newUser = await checkNewUser(req.user.email);
     newAuthKey = crypto.randomBytes(64).toString("hex");
     newAuthValidity = getDateNow(AUTH_VALIDITY_IN_DAYS);
     const data = {
+      id: undefined,
+      email: undefined,
       lastLogin: getDateNow(),
       authKey: newAuthKey,
       authValidity: newAuthValidity,
+      posts: undefined,
     };
 
     if (newUser) {
