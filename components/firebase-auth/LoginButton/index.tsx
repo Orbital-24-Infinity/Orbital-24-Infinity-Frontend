@@ -1,7 +1,8 @@
 "use client";
-import { GoogleAuthProvider,signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { cookies } from "next/headers";
 import Image from "next/image";
-import React from "react";
+import React, { useContext } from "react";
 
 import { auth } from "@/app/firebase/config";
 
@@ -15,7 +16,8 @@ const LoginButton = () => {
   const handleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleAuth);
-      fetch("/api/new-user", {
+      // typing this instead of any type is way too troublesome, i can't be bothered
+      const res: any = await fetch("/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

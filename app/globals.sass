@@ -1,14 +1,10 @@
-:root 
-  --foreground-rgb: 255, 255, 255
-  --background-start-rgb: 0, 0, 0
-  --background-end-rgb: 30, 30, 30
-  --background-buttons: 74, 74, 74
-  --background-buttons-highlight: 60, 60, 60
+@import "./styles/Colours.sass"
+@import "./styles/Fonts.sass"
 
 body 
   @extend .open-sans-default
-  color: rgb(var(--foreground-rgb))
-  background-color: rgb(var(--background-end-rgb))
+  color: $foreground-rgb
+  background-color: $background-primary-rgb
   height: 100vh
   width: 100vw
   margin: 0
@@ -16,7 +12,7 @@ body
   *
     text-decoration: none
     outline: none
-    color: rgb(var(--foreground-rgb))
+    color: $foreground-rgb
     border: none
 
   button

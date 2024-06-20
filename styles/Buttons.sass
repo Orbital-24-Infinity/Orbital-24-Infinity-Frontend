@@ -1,13 +1,14 @@
-@import "./app/globals.sass"
+@import "./styles/Fonts.sass"
+@import "./styles/Colours.sass"
   
 .default-button
   @extend .noto-sans-default
   border-radius: 10px
   padding: 1em 2em
-  background-color: rgb(var(--background-buttons))
+  background-color: $background-buttons
   font-size: 1em
   transition: 0.2s ease
   font-weight: 500
   
   &:hover
-    background-color: rgb(var(--background-buttons-highlight))
+    background-color: $background-buttons-highlight

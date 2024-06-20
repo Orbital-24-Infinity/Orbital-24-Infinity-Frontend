@@ -1,0 +1,78 @@
+@import "./styles/Colours.sass"
+
+.popupWrapper
+  position: fixed
+  display: flex
+  left: 0
+  top: 0
+  width: 100vw
+  height: 100vh
+  background-color: rgba($background-start-rgb, 0.9)
+  z-index: 1000
+
+.popup
+  display: flex
+  flex-direction: column
+  width: 50%
+  height: fit-content
+  min-width: 400px
+  min-height: 100px
+  background-color: $background-primary-rgb
+  margin: auto
+  padding: 20px
+  border-radius: 15px
+  transition: 0.2 ease
+  animation: fadeIn 0.25s ease
+
+.header, .subheader
+  $margin-distance: 40px
+  $padding-distance: 30px
+  overflow-x: hidden
+  height: auto
+  word-wrap: anywhere
+  @extend .noto-sans-default
+
+  &.header
+    font-weight: 500
+    font-size: 1.25em
+    padding-top: $padding-distance
+    margin: 0 $margin-distance
+
+  &.subheader
+    font-weight: 800
+    font-size: 1.6em
+    padding-top: calc($padding-distance/2)
+    margin: 0 $margin-distance
+
+.decisionButtons
+  display: flex
+  justify-content: flex-end
+  margin: auto 0 0 0
+
+.yes, .no
+  @extend .noto-sans-default
+  margin: 10px
+  padding: 15px 35px
+  font-size: 0.9em
+  background-color: $foreground-rgb
+  color: $background-start-rgb
+  border-radius: 10px
+  transition: 0.2s ease
+
+  &:hover, &:active
+    background-color: $foreground-secondary-rgb
+
+.yes
+  font-weight: 700
+  background-color: transparent!important
+  &:hover, &:active
+    opacity: 0.85
+
+.no
+  font-weight: 400
+
+@keyframes fadeIn 
+  from
+    opacity: 0
+  to
+    opacity: 1

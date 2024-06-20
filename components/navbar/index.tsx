@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -17,7 +18,9 @@ const NavbarComponent = ({ children }: NavbarProps) => {
   return (
     <div>
       <div className={styles.navbar}>
-        <div>{user?.displayName}</div>
+        <Link className={styles.displayName} href="/dashboard">
+          {user?.displayName}
+        </Link>
         <LogoutButton />
       </div>
       {children ?? children}

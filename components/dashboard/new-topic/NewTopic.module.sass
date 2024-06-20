@@ -1,0 +1,67 @@
+@import "./styles/Buttons.sass"
+@import "./styles/Colours.sass"
+
+$margin-distance: 40px
+$padding-distance: 30px
+
+.newTopicWrapper
+  width: 100%
+  position: absolute
+  bottom: 0
+  background: linear-gradient(180deg, rgba($background-start-rgb, 0) 0%, $background-primary-rgb 25%)
+
+.newTopic
+  @extend .default-button
+  position: sticky
+  margin: 7vh auto 5vh auto
+  display: flex
+  width: max(min(300px, 80vw), 40vw)
+  justify-content: center
+  font-size: 0.8em
+  padding: 1.2em
+  
+  p
+    margin: auto 0
+    padding-left: 0.5em
+
+.editableText, .trainingData
+  @extend .noto-sans-default
+  font-weight: 600
+  width: stretch
+  background-color: transparent
+
+.editableText
+  font-size: 1.4em
+  padding: calc($padding-distance/4) calc($padding-distance/2)
+  margin: calc($margin-distance/2) $margin-distance
+  border-bottom: 1px solid rgba($foreground-rgb, 0.1)
+  transition: 0.15s ease
+  opacity: 0.8
+
+  &:focus, &:active, &:hover
+    opacity: 1
+
+  &::placeholder
+    font-style: italic
+    font-size: 0.75em
+    opacity: 0.4
+
+.newNamePopupWrapper
+  width: 100%
+
+.trainingData
+  border-radius: 15px
+  min-height: 200px
+  border: 2px solid $background-buttons
+  display: flex
+  padding: $padding-distance
+  margin: $margin-distance
+  resize: vertical
+  width: stretch
+  transition: 0.2s ease
+
+.errorShort
+  color: red
+  margin: 0 $margin-distance
+  font-size: 0.8em
+  font-weight: bold
