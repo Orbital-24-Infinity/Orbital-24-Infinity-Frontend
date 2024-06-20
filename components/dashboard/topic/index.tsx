@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { getDateNow } from "@/app/api/login/date";
@@ -14,7 +14,7 @@ import styles from "./Topic.module.sass";
 interface ITopicProps {
   topic: ITopic;
   setTopic: (newName: string, lastModified?: Date) => void;
-  index: number;
+  setIsLoadingTopics: Dispatch<SetStateAction<boolean>>;
   handleFetchTopics: () => void;
 }
 
@@ -31,7 +31,12 @@ const getStatusColour = (status: string) => {
   }
 };
 
-const Topic = ({ topic, setTopic, index, handleFetchTopics }: ITopicProps) => {
+const Topic = ({
+  topic,
+  setTopic,
+  setIsLoadingTopics,
+  handleFetchTopics,
+}: ITopicProps) => {
   const [isDeleteClicked, setIsDeleteClicked] = useState(false);
   const [user, loading, error] = useAuthState(auth);
   const [topicNameLastEdited, setLastEdited] = useState<Date>();
@@ -108,6 +113,8 @@ const Topic = ({ topic, setTopic, index, handleFetchTopics }: ITopicProps) => {
           header={"Are you sure you want to delete the following..."}
           text={topic.topicName}
           handleOption1={() => {
+            setIsDeleteClicked(false);
+            setIsLoadingTopics(true);
             fetch("/api/topics/delete", {
               method: "DELETE",
               headers: {
@@ -118,7 +125,6 @@ const Topic = ({ topic, setTopic, index, handleFetchTopics }: ITopicProps) => {
                 topic: topic,
               }),
             }).then((res) => {
-              setIsDeleteClicked(false);
               handleFetchTopics();
             });
           }}

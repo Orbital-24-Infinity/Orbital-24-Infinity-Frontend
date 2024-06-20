@@ -3,11 +3,10 @@
   
 .questionComponent
   margin: 10vh 0
-  padding: 50px 0
+  padding: 10px 20vw
   text-align: left
 
 .questionNumber, .questionText
-  width: 50%
   margin: 0 auto
 
   &.questionNumber
@@ -21,9 +20,7 @@
 
 .questionOptions, .questionNavigationWrapper
   display: flex
-  width: 50%
   margin: 10vh auto
-  flex-wrap: wrap
 
   &.questionOptions
     flex-direction: column
@@ -34,7 +31,8 @@
 
     button
       @extend .default-button
-      min-width: min(250px, 10vw)
+      min-width: 250px
+      margin-bottom: 20px
 
     .nextQn
       margin-left: auto
@@ -45,3 +43,16 @@
   text-align: left
   height: 80px
   margin: 15px 0
+
+@media screen and (max-width: 768px)
+
+  .questionComponent
+    padding: 10px 12.5vw
+
+  .questionOptions, .questionNavigationWrapper
+
+    &.questionNavigationWrapper
+      flex-direction: column
+
+      button
+        width: 100%

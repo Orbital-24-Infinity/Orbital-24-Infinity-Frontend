@@ -60,7 +60,7 @@ const Popup = ({
         {!isHeaderDisabled && <p className={styles.header}>{header}</p>}
 
         {!isTextDisabled && (
-          <p className={styles.text} style={{ color: `${accentColour}` }}>
+          <p className={styles.subheader} style={{ color: `${accentColour}` }}>
             {text}
           </p>
         )}

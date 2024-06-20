@@ -61,10 +61,10 @@ const DashboardComponent = () => {
 
   const [user, isAuthLoading, error] = useAuthState(auth);
   const [topics, setTopics] = useState<ITopic[]>([]);
-  const [isFetchingTopics, setIsFetchingTopics] = useState(true);
+  const [isLoadingTopics, setIsLoadingTopics] = useState(true);
 
   const handleFetchTopics = useCallback(async () => {
-    setIsFetchingTopics(true);
+    setIsLoadingTopics(true);
     const res: ITopic[] = await fetch("/api/topics/retrieve", {
       method: "POST",
       headers: {
@@ -78,7 +78,7 @@ const DashboardComponent = () => {
       topic.lastModified = new Date(topic.lastModified);
     });
     setTopics(res);
-    setIsFetchingTopics(false);
+    setIsLoadingTopics(false);
   }, [user]);
 
   useEffect(() => {
@@ -94,45 +94,50 @@ const DashboardComponent = () => {
       </div>
 
       <div className="topics">
-        {(isAuthLoading || isFetchingTopics) && (
+        {(isAuthLoading || isLoadingTopics) && (
           <div className="dashboardTopicLoadingWrapper">
             <LoadingComponent />
           </div>
         )}
-        {!isFetchingTopics && !isAuthLoading && topics.length === 0 && (
+        {!isLoadingTopics && !isAuthLoading && topics.length === 0 && (
           <p className="emptyDashboard">
             {
               "It's rather empty here... What if you tried to click the New Topic button below?"
             }
           </p>
         )}
-        {topics.map((topic, index) => (
-          <Topic
-            topic={topic}
-            index={index}
-            setTopic={(newName: string, lastModified?: Date) => {
-              setTopics((prev) => {
-                return prev.map((prevTopic) =>
-                  prevTopic.topicID === topic.topicID
-                    ? {
-                        ...prevTopic,
-                        topicName: newName,
-                        lastModified: lastModified
-                          ? lastModified
-                          : prevTopic.lastModified,
-                      }
-                    : prevTopic
-                );
-              });
-              return;
-            }}
-            key={topic.topicID}
-            handleFetchTopics={handleFetchTopics}
-          />
-        ))}
+        {!isLoadingTopics &&
+          !isAuthLoading &&
+          topics.map((topic) => (
+            <Topic
+              topic={topic}
+              setTopic={(newName: string, lastModified?: Date) => {
+                setTopics((prev) => {
+                  return prev.map((prevTopic) =>
+                    prevTopic.topicID === topic.topicID
+                      ? {
+                          ...prevTopic,
+                          topicName: newName,
+                          lastModified: lastModified
+                            ? lastModified
+                            : prevTopic.lastModified,
+                        }
+                      : prevTopic
+                  );
+                });
+                return;
+              }}
+              setIsLoadingTopics={setIsLoadingTopics}
+              key={topic.topicID}
+              handleFetchTopics={handleFetchTopics}
+            />
+          ))}
       </div>
 
-      <NewTopic handleFetchTopics={handleFetchTopics} />
+      <NewTopic
+        handleFetchTopics={handleFetchTopics}
+        setIsLoadingTopics={setIsLoadingTopics}
+      />
     </div>
   );
 };

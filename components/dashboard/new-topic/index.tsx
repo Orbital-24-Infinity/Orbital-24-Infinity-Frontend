@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "@/app/firebase/config";
@@ -11,9 +11,10 @@ import styles from "./NewTopic.module.sass";
 
 interface NewTopicProps {
   handleFetchTopics: () => any;
+  setIsLoadingTopics: Dispatch<SetStateAction<boolean>>;
 }
 
-const NewTopic = ({ handleFetchTopics }: NewTopicProps) => {
+const NewTopic = ({ handleFetchTopics, setIsLoadingTopics }: NewTopicProps) => {
   const accentColour = "#289497";
   const errorColour = "#FF0000";
 
@@ -96,6 +97,8 @@ const NewTopic = ({ handleFetchTopics }: NewTopicProps) => {
             } else {
               const handleNewTopic = async () => {
                 try {
+                  setIsNewTopicDetailsOpen(false);
+                  setIsLoadingTopics(true);
                   return await fetch("/api/topics/new", {
                     method: "POST",
                     headers: {
@@ -107,7 +110,6 @@ const NewTopic = ({ handleFetchTopics }: NewTopicProps) => {
                     }),
                   }).then((res) => {
                     handleFetchTopics();
-                    setIsNewTopicDetailsOpen(false);
                     setNewTopicName("");
                     setTrainingData("");
                   });

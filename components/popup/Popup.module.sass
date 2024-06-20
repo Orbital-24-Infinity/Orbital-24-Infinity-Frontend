@@ -24,9 +24,12 @@
   transition: 0.2 ease
   animation: fadeIn 0.25s ease
 
-.header, .text
+.header, .subheader
   $margin-distance: 40px
   $padding-distance: 30px
+  overflow-x: hidden
+  height: auto
+  word-wrap: anywhere
   @extend .noto-sans-default
 
   &.header
@@ -35,7 +38,7 @@
     padding-top: $padding-distance
     margin: 0 $margin-distance
 
-  &.text
+  &.subheader
     font-weight: 800
     font-size: 1.6em
     padding-top: calc($padding-distance/2)
