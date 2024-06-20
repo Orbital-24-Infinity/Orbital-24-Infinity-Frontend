@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/firebase-admin";
 import prisma from "@/lib/prisma";
 
-import { getDateNow } from "../login/route";
+import { getDateNow } from "../login/date";
 
 const dynamic = "force-dynamic";
 export const AUTH_VALIDITY_IN_DAYS = 1;

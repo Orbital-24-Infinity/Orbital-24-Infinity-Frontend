@@ -96,7 +96,7 @@ const NewTopic = ({ handleFetchTopics }: NewTopicProps) => {
             } else {
               const handleNewTopic = async () => {
                 try {
-                  return await fetch("/api/new-topic", {
+                  return await fetch("/api/topics/new", {
                     method: "POST",
                     headers: {
                       "Content-Type": "application/json",

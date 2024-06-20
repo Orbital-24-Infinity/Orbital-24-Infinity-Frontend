@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { ITopic, TopicStatus } from "@/components/dashboard/topic/constants";
 import prisma from "@/lib/prisma";
 
-import { checkValidRequest } from "../authentication/route";
+import { checkValidRequest } from "../../authentication/checker";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +25,6 @@ export async function POST(request: Request) {
       },
     });
   }
-  console.log(validReq);
   const status = await Promise.all(
     result.map((each) =>
       prisma.question.findMany({ where: { topicID: each.id } })
@@ -36,10 +35,11 @@ export async function POST(request: Request) {
       return {
         topicID: topic.id!,
         topicName: topic.title,
-        lastModified:
-          typeof topic.lastModified! === "string"
-            ? topic.lastModified!
-            : topic.lastModified!.toISOString(),
+        lastModified: !topic.lastModified
+          ? new Date(0)
+          : typeof topic.lastModified! === "string"
+            ? new Date(topic.lastModified)
+            : topic.lastModified!,
         status:
           status[index].length === 0
             ? TopicStatus.GENERATING

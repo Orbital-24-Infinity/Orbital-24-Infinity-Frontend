@@ -16,7 +16,7 @@ const LoginButton = () => {
   const handleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleAuth);
-      // typing this is way too troublesome, i can't be bothered
+      // typing this instead of any type is way too troublesome, i can't be bothered
       const res: any = await fetch("/api/login", {
         method: "POST",
         headers: {

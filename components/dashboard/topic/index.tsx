@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
+import { getDateNow } from "@/app/api/login/date";
 import { auth } from "@/app/firebase/config";
 import Icon, { Icons } from "@/components/icons";
 import Popup from "@/components/popup";
@@ -12,6 +13,8 @@ import styles from "./Topic.module.sass";
 
 interface ITopicProps {
   topic: ITopic;
+  setTopic: (newName: string, lastModified?: Date) => void;
+  index: number;
   handleFetchTopics: () => void;
 }
 
@@ -28,9 +31,35 @@ const getStatusColour = (status: string) => {
   }
 };
 
-const Topic = ({ topic, handleFetchTopics }: ITopicProps) => {
+const Topic = ({ topic, setTopic, index, handleFetchTopics }: ITopicProps) => {
   const [isDeleteClicked, setIsDeleteClicked] = useState(false);
   const [user, loading, error] = useAuthState(auth);
+  const [topicNameLastEdited, setLastEdited] = useState<Date>();
+
+  useEffect(() => {
+    if (topicNameLastEdited?.getTime()) {
+      const autosaveTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch("/api/topics/update", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user: user,
+              topic: topic,
+            }),
+          }).then(async (res: any) => {
+            res = await res.json();
+            if (res.success) {
+              setTopic(topic.topicName, new Date(res.lastModified));
+            }
+          });
+        } catch {}
+      }, 2500);
+      return () => clearTimeout(autosaveTimeout);
+    }
+  }, [topicNameLastEdited, topic, user, setTopic]);
 
   return (
     <div key={topic.topicID} className={styles.topic}>
@@ -38,7 +67,12 @@ const Topic = ({ topic, handleFetchTopics }: ITopicProps) => {
         <input
           value={topic.topicName}
           className={styles.topicName}
-          onChange={(e) => {}}
+          onChange={(e) => {
+            if (topic.topicName) {
+              setTopic(e.target.value);
+              setLastEdited(getDateNow());
+            }
+          }}
         />
         <button
           onClick={(e) => setIsDeleteClicked(true)}
@@ -63,7 +97,8 @@ const Topic = ({ topic, handleFetchTopics }: ITopicProps) => {
       <div className={styles.topicFooter}>
         <ActionButton type={topic.status} id={topic.topicID} />
         <p className={styles.topicLastModified}>
-          Last Modified: {topic.lastModified}
+          Last Modified: {topic.lastModified?.toLocaleDateString()}{" "}
+          {topic.lastModified.toLocaleTimeString()}
         </p>
       </div>
 
@@ -72,7 +107,7 @@ const Topic = ({ topic, handleFetchTopics }: ITopicProps) => {
           header={"Are you sure you want to delete the following..."}
           text={topic.topicName}
           handleOption1={() => {
-            fetch("/api/delete-topic", {
+            fetch("/api/topics/delete", {
               method: "DELETE",
               headers: {
                 "Content-Type": "application/json",

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 
-import { checkValidRequest } from "../authentication/route";
+import { checkValidRequest } from "../../authentication/checker";
 
 export const dynamic = "force-dynamic";
 

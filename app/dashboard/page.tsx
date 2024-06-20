@@ -1,6 +1,7 @@
 "use client";
 import "../../styles/Dashboard.sass";
 
+import { NextResponse } from "next/server";
 import { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -8,11 +9,13 @@ import { auth } from "@/app/firebase/config";
 import NewTopic from "@/components/dashboard/new-topic";
 import Topic from "@/components/dashboard/topic";
 import { ITopic, TopicStatus } from "@/components/dashboard/topic/constants";
+import LoadingComponent from "@/components/firebase-auth/Loading/LoadingComponent";
 import NavbarComponent from "@/components/navbar";
 
 import AuthWrapper from "../../components/firebase-auth/AuthWrapper";
 
 const DashboardComponent = () => {
+  // Dummy Data
   // const topics: ITopic[] = [
   //   {
   //     topicName: "CS2030S Finals Practice",
@@ -56,11 +59,13 @@ const DashboardComponent = () => {
   //   },
   // ];
 
-  const [user, loading, error] = useAuthState(auth);
+  const [user, isAuthLoading, error] = useAuthState(auth);
   const [topics, setTopics] = useState<ITopic[]>([]);
+  const [isFetchingTopics, setIsFetchingTopics] = useState(true);
 
   const handleFetchTopics = useCallback(async () => {
-    const res = await fetch("/api/retrieve-topics", {
+    setIsFetchingTopics(true);
+    const res: ITopic[] = await fetch("/api/topics/retrieve", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -68,8 +73,12 @@ const DashboardComponent = () => {
       body: JSON.stringify({
         user: user,
       }),
-    }).then((res) => res.json());
-    setTopics(await res);
+    }).then((res: Response) => res.json());
+    res.map((topic) => {
+      topic.lastModified = new Date(topic.lastModified);
+    });
+    setTopics(res);
+    setIsFetchingTopics(false);
   }, [user]);
 
   useEffect(() => {
@@ -85,16 +94,38 @@ const DashboardComponent = () => {
       </div>
 
       <div className="topics">
-        {topics.length === 0 && (
+        {(isAuthLoading || isFetchingTopics) && (
+          <div className="dashboardTopicLoadingWrapper">
+            <LoadingComponent />
+          </div>
+        )}
+        {!isFetchingTopics && !isAuthLoading && topics.length === 0 && (
           <p className="emptyDashboard">
             {
               "It's rather empty here... What if you tried to click the New Topic button below?"
             }
           </p>
         )}
-        {topics.map((topic) => (
+        {topics.map((topic, index) => (
           <Topic
             topic={topic}
+            index={index}
+            setTopic={(newName: string, lastModified?: Date) => {
+              setTopics((prev) => {
+                return prev.map((prevTopic) =>
+                  prevTopic.topicID === topic.topicID
+                    ? {
+                        ...prevTopic,
+                        topicName: newName,
+                        lastModified: lastModified
+                          ? lastModified
+                          : prevTopic.lastModified,
+                      }
+                    : prevTopic
+                );
+              });
+              return;
+            }}
             key={topic.topicID}
             handleFetchTopics={handleFetchTopics}
           />

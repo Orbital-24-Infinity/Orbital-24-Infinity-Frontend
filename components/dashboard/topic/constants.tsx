@@ -8,7 +8,7 @@ export enum TopicStatus {
 export interface ITopic {
   topicID: number;
   topicName: string;
-  lastModified: string;
+  lastModified: Date;
   status: TopicStatus;
   questionsAttempted: number;
   questionsTotal: number;

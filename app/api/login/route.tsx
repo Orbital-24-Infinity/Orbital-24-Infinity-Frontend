@@ -6,6 +6,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/firebase-admin";
 import prisma from "@/lib/prisma";
 
+import { getDateNow } from "./date";
+
 const dynamic = "force-dynamic";
 export const AUTH_VALIDITY_IN_DAYS = 1;
 
@@ -22,14 +24,6 @@ const checkNewUser = async (email: string): Promise<boolean> => {
       })
     ).length === 0
   );
-};
-
-export const getDateNow = (offset?: number): Date => {
-  const date = new Date();
-  if (offset) {
-    date.setDate(date.getDate() + offset);
-  }
-  return date;
 };
 
 export async function POST(request: Request) {
@@ -74,7 +68,6 @@ export async function POST(request: Request) {
       });
     }
     statusCode = 200;
-
     cookies().set(
       "session",
       JSON.stringify({

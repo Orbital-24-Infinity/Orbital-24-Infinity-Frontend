@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "@/app/firebase/config";
+import LoadingIcon from "@/components/firebase-auth/Loading";
 
 const Logout = () => {
   const router = useRouter();
@@ -31,7 +32,7 @@ const Logout = () => {
     }
   }, [router, user]);
 
-  return <></>;
+  return <LoadingIcon />;
 };
 
 export default Logout;
