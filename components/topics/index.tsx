@@ -1,9 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+
+import { auth } from "@/app/firebase/config";
+import { ITopic } from "@/components/dashboard/topic/constants";
 
 import QuestionComponent, { IQuestion } from "./questions";
+import QuestionNavbar from "./questions/questions-navbar";
 import styles from "./TopicComponent.module.sass";
 
 interface IData {
@@ -14,7 +19,7 @@ interface IData {
 
 const dummyData: IData = {
   title: "CS2040S Finals Practice",
-  topicID: 2,
+  topicID: 7,
   questions: [
     {
       question: "What is the time complexity of binary search?",
@@ -86,7 +91,9 @@ const dummyData: IData = {
 };
 
 const TopicComponent = () => {
+  const [user, isAuthLoading, error] = useAuthState(auth);
   const [questions, setQuestions] = useState(dummyData);
+  const [topic, setTopic] = useState<ITopic>();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const router = useRouter();
 
@@ -101,6 +108,30 @@ const TopicComponent = () => {
     });
   };
 
+  const fetchData = useCallback(() => {
+    const asyncFetchData = async () => {
+      const res: ITopic[] = await fetch("/api/topics/retrieve", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user: user,
+          single: true,
+          topicID: questions.topicID,
+        }),
+      }).then((res: Response) => res.json());
+      setTopic(res[0]);
+    };
+    asyncFetchData();
+  }, [user, questions.topicID]);
+
+  useEffect(() => {
+    if (!topic && user && !isAuthLoading) {
+      fetchData();
+    }
+  }, [topic, user, fetchData, isAuthLoading]);
+
   useEffect(() => {
     // TODO fetch questions from backend
     if (questions.questions.length <= 0) {
@@ -110,6 +141,12 @@ const TopicComponent = () => {
 
   return (
     <div className={styles.topicComponent}>
+      <QuestionNavbar
+        data={topic?.data ? topic.data : ""}
+        title={topic?.topicName ? topic.topicName : ""}
+        fetchData={fetchData}
+        topicID={questions.topicID}
+      />
       <QuestionComponent
         question={questions.questions[currentQuestion]}
         questionNumber={currentQuestion}

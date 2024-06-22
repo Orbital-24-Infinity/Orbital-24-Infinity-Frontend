@@ -12,6 +12,7 @@ export async function POST(request: Request) {
   const req = await request.json();
   const userEmail: string = await req?.user.email;
   const validReq = await checkValidRequest(userEmail);
+  const findSingle = req.single ? req.single : false;
   let result: any[] = [];
   if (userEmail && validReq) {
     const user = await prisma.user.findUnique({
@@ -19,12 +20,29 @@ export async function POST(request: Request) {
         email: userEmail,
       },
     });
-    result = await prisma.topic.findMany({
-      where: {
-        userID: user!.id,
-      },
+    console.log({
+      userID: user!.id,
+      id: req.topicID ? req.topicID : -1,
     });
+    if (findSingle) {
+      const output = await prisma.topic.findFirst({
+        where: {
+          userID: user!.id,
+          id: req.topicID ? req.topicID : -1,
+        },
+      });
+      if (output != null) {
+        result = [output];
+      }
+    } else {
+      result = await prisma.topic.findMany({
+        where: {
+          userID: user!.id,
+        },
+      });
+    }
   }
+  console.log(result);
   const status = await Promise.all(
     result.map((each) =>
       prisma.question.findMany({ where: { topicID: each.id } })
@@ -51,6 +69,7 @@ export async function POST(request: Request) {
           0
         ),
         questionsTotal: topic.maxQuestions!,
+        data: topic.data,
       };
     }
   );

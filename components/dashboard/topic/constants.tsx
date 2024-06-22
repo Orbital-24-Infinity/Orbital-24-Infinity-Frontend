@@ -12,4 +12,5 @@ export interface ITopic {
   status: TopicStatus;
   questionsAttempted: number;
   questionsTotal: number;
+  data: string;
 }

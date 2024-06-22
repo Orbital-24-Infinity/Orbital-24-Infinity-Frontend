@@ -1,9 +1,8 @@
-import "../../../styles/Topic.sass";
+import "@/styles/Topic.sass";
 
+import AuthWrapper from "@/components/firebase-auth/AuthWrapper";
 import NavbarComponent from "@/components/navbar";
 import TopicComponent from "@/components/topics";
-
-import AuthWrapper from "../../../components/firebase-auth/AuthWrapper";
 
 const TopicPage = () => {
   return (
