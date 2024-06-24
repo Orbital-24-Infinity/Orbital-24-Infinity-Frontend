@@ -1,9 +1,6 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 
-import { auth } from "@/app/firebase/config";
 import Icon, { Icons } from "@/components/icons";
 import Popup from "@/components/popup";
 
@@ -19,16 +16,10 @@ const NewTopic = ({ handleFetchTopics, setIsLoadingTopics }: NewTopicProps) => {
   const accentColour = "#289497";
   const errorColour = "#FF0000";
 
-  const [user, loading, error] = useAuthState(auth);
-  const router = useRouter();
-
   const [isNewTopicOpen, setIsNewTopicOpen] = useState(false);
   const [isNewTopicDetailsOpen, setIsNewTopicDetailsOpen] = useState(false);
   const [newTopicName, setNewTopicName] = useState("");
-  const [trainingData, setTrainingData] = useState("");
   const [highlightColour, setHighlightColour] = useState(accentColour);
-  const [highlightColourTrainingData, setHighlightColourTrainingData] =
-    useState(accentColour);
 
   return (
     <div className={styles.newTopicWrapper}>
@@ -86,6 +77,7 @@ const NewTopic = ({ handleFetchTopics, setIsLoadingTopics }: NewTopicProps) => {
           setIsLoadingTopics={setIsLoadingTopics}
           setIsNewTopicDetailsOpen={setIsNewTopicDetailsOpen}
           setIsNewTopicOpen={setIsNewTopicOpen}
+          title={newTopicName}
         />
       )}
     </div>

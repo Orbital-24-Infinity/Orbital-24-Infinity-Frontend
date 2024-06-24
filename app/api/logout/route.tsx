@@ -6,7 +6,6 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/firebase-admin";
 import prisma from "@/lib/prisma";
 
-import { AUTH_VALIDITY_IN_DAYS } from "../constants";
 import { getDateNow } from "../login/date";
 
 const dynamic = "force-dynamic";
@@ -32,8 +31,9 @@ export async function POST(request: Request) {
   let newAuthKey = "";
   let newAuthValidity = getDateNow();
   let statusCode = 401;
+  const session: any = JSON.parse(cookies().get("session")?.value!);
   try {
-    const token = await auth.verifyIdToken(req.idToken);
+    const token = await auth.verifyIdToken(session!["idToken"]);
     if (!token) {
       return NextResponse.json({
         ...req,
@@ -42,11 +42,13 @@ export async function POST(request: Request) {
     }
 
     const userExists = await checkUserExists(req.email);
-    newAuthValidity = getDateNow();
     const data = {
-      lastLogin: getDateNow(),
+      id: undefined,
+      email: undefined,
+      lastLogin: undefined,
       authKey: newAuthKey,
       authValidity: newAuthValidity,
+      posts: undefined,
     };
 
     if (userExists) {

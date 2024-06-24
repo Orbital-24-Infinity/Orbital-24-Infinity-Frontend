@@ -74,7 +74,7 @@ const Topic = ({
           value={topic.topicName}
           className={styles.topicName}
           onChange={(e) => {
-            if (topic.topicName) {
+            if (e.target.value) {
               setTopic(e.target.value);
               setLastEdited(getDateNow());
             }

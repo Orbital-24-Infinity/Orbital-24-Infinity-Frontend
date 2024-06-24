@@ -12,7 +12,7 @@ export async function POST(request: Request) {
   const lastModified = getDateNow();
   const userEmail: string = await req?.user?.email;
   const validReq = await checkValidRequest(userEmail);
-  console.log(validReq);
+  
   let result = {
     data: {
       id: undefined,
