@@ -24,6 +24,7 @@ export async function POST(request: Request) {
         maxQuestions: 10,
         userID: user!.id,
         data: res.topic.data,
+        isGenerating: true,
       },
     });
   }
