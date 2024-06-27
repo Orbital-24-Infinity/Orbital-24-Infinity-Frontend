@@ -11,15 +11,16 @@ datasource db {
 }
 
 model Topic {
-  id            Int        @id @default(autoincrement()) @map(name: "topicid")
+  id            Int         @id @default(autoincrement()) @map(name: "topicid")
   title         String
-  maxQuestions  Int        @default(0) // max number of questions, used to keep track when generating additional qns
+  maxQuestions  Int         @default(0) // max number of questions, used to keep track when generating additional qns
   files         File[]
   questions     Question[] 
-  user          User       @relation(fields: [userID], references: [id])
+  user          User        @relation(fields: [userID], references: [id])
   userID        Int
-  lastModified  DateTime  @default(now())
-  data          String // the training data of min 250 characters
+  lastModified  DateTime    @default(now())
+  isGenerating  Boolean     @default(false)
+  data          String      // the training data of min 250 characters
 }
 
 model User {

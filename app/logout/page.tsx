@@ -16,21 +16,25 @@ const Logout = () => {
     const handleLogout = async () => {
       try {
         await signOut(auth);
-        fetch("/api/logout", {
+        await fetch("/api/logout", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(user),
         });
+      } catch (error) {
+      } finally {
         router.push("/login");
-      } catch (error) {}
+      }
     };
 
     if (user) {
       handleLogout();
+    } else if (!loading) {
+      router.push("/login");
     }
-  }, [router, user]);
+  }, [router, user, loading]);
 
   return <LoadingIcon />;
 };

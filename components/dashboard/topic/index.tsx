@@ -57,7 +57,7 @@ const Topic = ({
           }).then(async (res: any) => {
             res = await res.json();
             if (res.success) {
-              setTopic(topic.topicName, new Date(res.lastModified));
+              setTopic(topic.topicName, new Date(res.data.lastModified));
             }
           });
         } catch {}
@@ -74,7 +74,7 @@ const Topic = ({
           value={topic.topicName}
           className={styles.topicName}
           onChange={(e) => {
-            if (topic.topicName) {
+            if (e.target.value) {
               setTopic(e.target.value);
               setLastEdited(getDateNow());
             }

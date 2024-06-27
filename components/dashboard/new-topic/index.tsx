@@ -1,13 +1,11 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
 
-import { auth } from "@/app/firebase/config";
 import Icon, { Icons } from "@/components/icons";
 import Popup from "@/components/popup";
 
 import styles from "./NewTopic.module.sass";
+import PopupDetails from "./popup-details";
 
 interface NewTopicProps {
   handleFetchTopics: () => any;
@@ -18,16 +16,10 @@ const NewTopic = ({ handleFetchTopics, setIsLoadingTopics }: NewTopicProps) => {
   const accentColour = "#289497";
   const errorColour = "#FF0000";
 
-  const [user, loading, error] = useAuthState(auth);
-  const router = useRouter();
-
   const [isNewTopicOpen, setIsNewTopicOpen] = useState(false);
   const [isNewTopicDetailsOpen, setIsNewTopicDetailsOpen] = useState(false);
   const [newTopicName, setNewTopicName] = useState("");
-  const [trainingData, setTrainingData] = useState("");
   const [highlightColour, setHighlightColour] = useState(accentColour);
-  const [highlightColourTrainingData, setHighlightColourTrainingData] =
-    useState(accentColour);
 
   return (
     <div className={styles.newTopicWrapper}>
@@ -80,71 +72,13 @@ const NewTopic = ({ handleFetchTopics, setIsLoadingTopics }: NewTopicProps) => {
       )}
 
       {isNewTopicDetailsOpen && (
-        <Popup
-          header="Upload your text/notes for..."
-          text={newTopicName}
-          option1Text="Back"
-          option2Text="Generate"
-          accentColour={accentColour}
-          accentColourSecondary={accentColour}
-          handleOption1={() => {
-            setIsNewTopicDetailsOpen(false);
-            setIsNewTopicOpen(true);
-          }}
-          handleOption2={() => {
-            if (trainingData.length < 250) {
-              setHighlightColourTrainingData(errorColour);
-            } else {
-              const handleNewTopic = async () => {
-                try {
-                  setIsNewTopicDetailsOpen(false);
-                  setIsLoadingTopics(true);
-                  return await fetch("/api/topics/new", {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                      user: user,
-                      topic: { data: trainingData, title: newTopicName },
-                    }),
-                  }).then((res) => {
-                    handleFetchTopics();
-                    setNewTopicName("");
-                    setTrainingData("");
-                  });
-                } catch (error) {
-                  return;
-                }
-              };
-              handleNewTopic();
-            }
-          }}
-          handleDefault={() => setIsNewTopicDetailsOpen(false)}
-          isDefaultOption1
-          isOption1Underlined={false}
-        >
-          <div>
-            <div style={{ marginTop: "25px" }}></div>
-            <textarea
-              placeholder="Insert text here..."
-              value={trainingData}
-              onChange={(e) => {
-                setTrainingData(e.target.value);
-                setHighlightColourTrainingData(accentColour);
-              }}
-              className={styles.trainingData}
-              style={{
-                borderColor: highlightColourTrainingData,
-              }}
-            ></textarea>
-            {highlightColourTrainingData === errorColour && (
-              <p className={styles.errorShort}>
-                Your notes are a little short, try to add more content
-              </p>
-            )}
-          </div>
-        </Popup>
+        <PopupDetails
+          handleFetchTopics={handleFetchTopics}
+          setIsLoadingTopics={setIsLoadingTopics}
+          setIsNewTopicDetailsOpen={setIsNewTopicDetailsOpen}
+          setIsNewTopicOpen={setIsNewTopicOpen}
+          title={newTopicName}
+        />
       )}
     </div>
   );

@@ -1,5 +1,8 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
+
+import Icon, { Icons } from "@/components/icons";
 
 import styles from "./Questions.module.sass";
 

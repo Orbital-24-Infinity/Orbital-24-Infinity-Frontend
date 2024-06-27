@@ -1,7 +1,6 @@
 "use client";
 import "../../styles/Dashboard.sass";
 
-import { NextResponse } from "next/server";
 import { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 

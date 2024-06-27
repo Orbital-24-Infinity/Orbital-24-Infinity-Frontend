@@ -1,7 +1,5 @@
-import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
-import { ITopic, TopicStatus } from "@/components/dashboard/topic/constants";
 import prisma from "@/lib/prisma";
 
 import { checkValidRequest } from "../../authentication/checker";
@@ -11,14 +9,26 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   const req = await request.json();
-  const userEmail: string = await req?.user.email;
-  const validReq = await checkValidRequest(userEmail);
   const lastModified = getDateNow();
+  const userEmail: string = await req?.user?.email;
+  const validReq = await checkValidRequest(userEmail);
+  
   let result = {
-    ...request,
+    data: {
+      id: undefined,
+      title: req.topic?.topicName || undefined,
+      maxQuestions: undefined,
+      files: undefined,
+      questions: undefined,
+      user: undefined,
+      userID: undefined,
+      lastModified: lastModified,
+      data: req.topic?.data || undefined,
+    },
     success: false,
-    lastModified: lastModified,
+    ...request,
   };
+
   try {
     if (userEmail && validReq) {
       const user = await prisma.user.findUnique({
@@ -27,23 +37,9 @@ export async function POST(request: Request) {
         },
       });
 
-      if (req.topicName == "") {
-        req.topic.topicName = undefined;
-      }
-
       await prisma.topic
         .update({
-          data: {
-            id: undefined,
-            title: req.topic.topicName || undefined,
-            maxQuestions: undefined,
-            files: undefined,
-            questions: undefined,
-            user: undefined,
-            userID: undefined,
-            lastModified: lastModified,
-            data: undefined,
-          },
+          data: result.data,
           where: {
             userID: user!.id,
             id: req.topic.topicID,
