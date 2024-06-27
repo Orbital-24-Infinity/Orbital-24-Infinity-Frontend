@@ -26,81 +26,93 @@ const TopicComponent = () => {
   const router = useRouter();
   const searchParams = useParams();
   const { id } = searchParams;
+  const thisTopicID = parseInt(typeof id === "string" ? id : id[0]);
 
-  const dummyData: IData = {
-    title: "CS2040S Finals Practice",
-    topicID: parseInt(typeof id === "string" ? id : id[0]),
+  // const dummyData: IData = {
+  //   title: "CS2040S Finals Practice",
+  //   topicID: thisTopicID,
+  //   questions: [
+  //     {
+  //       question: "What is the time complexity of binary search?",
+  //       selected: 3,
+  //       options: [
+  //         {
+  //           option: "O(n)",
+  //           correct: false,
+  //         },
+  //         {
+  //           option: "O(log n)",
+  //           correct: true,
+  //         },
+  //         {
+  //           option: "O(n log n)",
+  //           correct: false,
+  //         },
+  //         {
+  //           option: "O(n^2)",
+  //           correct: false,
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       question: "What is the time complexity of quicksort?",
+  //       selected: -1,
+  //       options: [
+  //         {
+  //           option: "O(n)",
+  //           correct: false,
+  //         },
+  //         {
+  //           option: "O(log n)",
+  //           correct: false,
+  //         },
+  //         {
+  //           option: "O(n log n)",
+  //           correct: true,
+  //         },
+  //         {
+  //           option: "O(n^2)",
+  //           correct: false,
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       question: "What is the time complexity of mergesort?",
+  //       selected: -1,
+  //       options: [
+  //         {
+  //           option: "O(n)",
+  //           correct: false,
+  //         },
+  //         {
+  //           option: "O(log n)",
+  //           correct: false,
+  //         },
+  //         {
+  //           option: "O(n log n)",
+  //           correct: true,
+  //         },
+  //         {
+  //           option: "O(n^2)",
+  //           correct: false,
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // };
+
+  const [questions, setQuestions] = useState<IData>({
+    title: "",
+    topicID: thisTopicID,
     questions: [
       {
-        question: "What is the time complexity of binary search?",
-        selected: 3,
-        options: [
-          {
-            option: "O(n)",
-            correct: false,
-          },
-          {
-            option: "O(log n)",
-            correct: true,
-          },
-          {
-            option: "O(n log n)",
-            correct: false,
-          },
-          {
-            option: "O(n^2)",
-            correct: false,
-          },
-        ],
-      },
-      {
-        question: "What is the time complexity of quicksort?",
+        question: "",
+        questionID: -1,
         selected: -1,
-        options: [
-          {
-            option: "O(n)",
-            correct: false,
-          },
-          {
-            option: "O(log n)",
-            correct: false,
-          },
-          {
-            option: "O(n log n)",
-            correct: true,
-          },
-          {
-            option: "O(n^2)",
-            correct: false,
-          },
-        ],
-      },
-      {
-        question: "What is the time complexity of mergesort?",
-        selected: -1,
-        options: [
-          {
-            option: "O(n)",
-            correct: false,
-          },
-          {
-            option: "O(log n)",
-            correct: false,
-          },
-          {
-            option: "O(n log n)",
-            correct: true,
-          },
-          {
-            option: "O(n^2)",
-            correct: false,
-          },
-        ],
+        options: [{ id: -1, questionID: -1, option: "", correct: false }],
       },
     ],
-  };
-
-  const [questions, setQuestions] = useState(dummyData);
+  });
 
   const updateQuestions = (newSelection: number) => {
     setQuestions((prev) => {
@@ -126,29 +138,39 @@ const TopicComponent = () => {
           topicID: questions.topicID,
         }),
       }).then((res: Response) => res.json());
+      console.log(res);
       if (res.length <= 0) {
         router.push("/dashboard");
       } else {
         setTopic(res[0]);
+        setQuestions({
+          title: res[0].topicName,
+          topicID: thisTopicID,
+          questions: res[0].questions.reduce(
+            (acc, eachOption, index) =>
+              acc.concat([
+                {
+                  question: eachOption.question,
+                  questionID: eachOption.id ?? -1,
+                  selected: eachOption.selected ? eachOption.selected : -1,
+                  options: res[0].questionsOptions[index],
+                },
+              ]),
+            [] as IQuestion[]
+          ),
+        });
         setIsFetchingData(false);
       }
     };
     setIsFetchingData(true);
     asyncFetchData();
-  }, [user, questions.topicID, router]);
+  }, [user, questions.topicID, router, thisTopicID]);
 
   useEffect(() => {
     if (!topic && user && !isAuthLoading) {
       fetchData();
     }
   }, [topic, user, fetchData, isAuthLoading]);
-
-  useEffect(() => {
-    // TODO fetch questions from backend
-    if (questions.questions.length <= 0) {
-      router.push("/dashboard");
-    }
-  }, [questions, router]);
 
   return (
     <div className={styles.topicComponent}>
@@ -170,6 +192,7 @@ const TopicComponent = () => {
               updateQuestions(newSelection);
               setCurrentQuestion((prev) => Math.max(0, prev - 1));
             }}
+            topicID={topic?.topicID ?? -1}
             onNextQn={(newSelection: number) => {
               if (
                 newSelection >= 0 &&

@@ -1,10 +1,8 @@
 "use client";
-import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "@/app/firebase/config";
-import Icon, { Icons } from "@/components/icons";
 import Popup from "@/components/popup";
 
 import styles from "../NewTopic.module.sass";
