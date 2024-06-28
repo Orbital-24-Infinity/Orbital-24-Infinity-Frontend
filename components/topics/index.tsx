@@ -110,11 +110,12 @@ const TopicComponent = () => {
         questionID: -1,
         selected: -1,
         options: [{ id: -1, questionID: -1, option: "", correct: false }],
+        marked: false,
       },
     ],
   });
 
-  const updateQuestions = (newSelection: number) => {
+  const updateQuestionsSelection = (newSelection: number) => {
     setQuestions((prev) => {
       let newQuestions = [...prev.questions];
       newQuestions[currentQuestion].selected = newSelection;
@@ -138,8 +139,8 @@ const TopicComponent = () => {
           topicID: questions.topicID,
         }),
       }).then((res: Response) => res.json());
-      console.log(res);
-      if (res.length <= 0) {
+      // console.log(res);
+      if (res.length <= 0 || res[0].questions.length <= 0) {
         router.push("/dashboard");
       } else {
         setTopic(res[0]);
@@ -154,6 +155,7 @@ const TopicComponent = () => {
                   questionID: eachOption.id ?? -1,
                   selected: eachOption.selected ? eachOption.selected : -1,
                   options: res[0].questionsOptions[index],
+                  marked: eachOption.marked ?? false,
                 },
               ]),
             [] as IQuestion[]
@@ -166,6 +168,33 @@ const TopicComponent = () => {
     asyncFetchData();
   }, [user, questions.topicID, router, thisTopicID]);
 
+  const handleMarking = async (questionNumber: number) => {
+    setQuestions((prev) => {
+      let newQuestions = [...prev.questions];
+      newQuestions[questionNumber].marked = true;
+      return {
+        ...prev,
+        questions: newQuestions,
+      };
+    });
+    await fetch("/api/topics/update-selections", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user: user,
+        topic: {
+          topicID: thisTopicID,
+        },
+        question: {
+          id: questions.questions[questionNumber].questionID,
+          marked: true,
+        },
+      }),
+    });
+  };
+
   useEffect(() => {
     if (!topic && user && !isAuthLoading) {
       fetchData();
@@ -176,7 +205,7 @@ const TopicComponent = () => {
     <div className={styles.topicComponent}>
       {isAuthLoading || isFetchingData ? (
         <LoadingComponent />
-      ) : (
+      ) : questions.title !== "" && questions.questions.length > 0 ? (
         <div>
           <QuestionNavbar
             data={topic?.data ? topic.data : ""}
@@ -187,26 +216,30 @@ const TopicComponent = () => {
           <QuestionComponent
             question={questions.questions[currentQuestion]}
             questionNumber={currentQuestion}
+            isMarked={questions.questions[currentQuestion].marked}
+            handleMark={handleMarking}
             lastQuestionNumber={questions.questions.length - 1}
             onPrevQn={(newSelection: number) => {
-              updateQuestions(newSelection);
+              updateQuestionsSelection(newSelection);
               setCurrentQuestion((prev) => Math.max(0, prev - 1));
             }}
             topicID={topic?.topicID ?? -1}
             onNextQn={(newSelection: number) => {
-              if (
-                newSelection >= 0 &&
-                newSelection <
-                  questions.questions[currentQuestion].options.length
-              ) {
-                updateQuestions(newSelection);
-                setCurrentQuestion((prev) =>
-                  Math.min(questions.questions.length - 1, prev + 1)
-                );
+              if (newSelection >= 0) {
+                updateQuestionsSelection(newSelection);
+                if (currentQuestion === questions.questions.length - 1) {
+                  router.push("/dashboard");
+                } else {
+                  setCurrentQuestion((prev) =>
+                    Math.min(questions.questions.length - 1, prev + 1)
+                  );
+                }
               }
             }}
           />
         </div>
+      ) : (
+        <></>
       )}
     </div>
   );

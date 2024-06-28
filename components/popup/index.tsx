@@ -54,7 +54,7 @@ const Popup = ({
     >
       <div
         className={styles.popup}
-        style={{ border: `2px solid ${accentColour}` }}
+        style={{ border: `1px solid ${accentColour}` }}
         onClick={(e) => e.stopPropagation()}
       >
         {!isHeaderDisabled && <p className={styles.header}>{header}</p>}
