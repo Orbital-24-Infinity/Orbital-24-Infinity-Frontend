@@ -1,3 +1,5 @@
+import { Prisma } from "@prisma/client";
+
 export enum TopicStatus {
   // CREATED = "Created", // topic created, files may or may not be uploaded,
   GENERATING = "Generating...", // generating in progress
@@ -13,4 +15,6 @@ export interface ITopic {
   questionsAttempted: number;
   questionsTotal: number;
   data: string;
+  questions: Prisma.QuestionUncheckedCreateInput[];
+  questionsOptions: Prisma.QuestionOptionsUncheckedCreateInput[][];
 }

@@ -1,7 +1,9 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
 
+import { auth } from "@/app/firebase/config";
 import PopupDetails from "@/components/dashboard/new-topic/popup-details";
 import Icon, { Icons } from "@/components/icons";
 
@@ -20,7 +22,32 @@ const QuestionNavbar = ({
   topicID,
   fetchData,
 }: QuestionNavbarProps) => {
+  const [user, loading, error] = useAuthState(auth);
   const [isEditMenuOpen, setIsEditMenuOpen] = useState(false);
+  const [currentTitle, setCurrentTitle] = useState(title);
+
+  useEffect(() => {
+    const handleUpdatedTitle = async () => {
+      if (user && currentTitle) {
+        await fetch("/api/topics/update", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user: user,
+            topic: { topicID: topicID, topicName: currentTitle },
+          }),
+        });
+      }
+    };
+
+    const timeoutHandle = setTimeout(() => {
+      handleUpdatedTitle();
+    }, 2500);
+
+    return () => clearTimeout(timeoutHandle);
+  }, [currentTitle, topicID, user]);
 
   return (
     <div className={styles.questionNavbar}>
@@ -33,6 +60,18 @@ const QuestionNavbar = ({
           hoverEffects
         />
       </Link>
+
+      <input
+        type="text"
+        className={styles.questionTitle}
+        value={currentTitle}
+        onChange={(e) => {
+          if (e.target.value) {
+            setCurrentTitle(e.target.value);
+          }
+        }}
+      />
+
       <div className={styles.questionNavbarRight}>
         {/* Add more icon functions here as needed */}
         <Icon

@@ -43,9 +43,24 @@ export async function POST(request: Request) {
 
   const status = await Promise.all(
     result.map((each) =>
-      prisma.question.findMany({ where: { topicID: each.id } })
+      prisma.question.findMany({
+        where: { topicID: each.id },
+        orderBy: { id: "asc" },
+      })
     )
   );
+
+  const questionOptions: Prisma.QuestionOptionsUncheckedCreateInput[][] = [];
+
+  if (findSingle && status[0]) {
+    await Promise.all(
+      status[0].map(async (each, index) => {
+        questionOptions[index] = await prisma.questionOptions.findMany({
+          where: { questionID: each.id },
+        });
+      })
+    );
+  }
 
   const processedResult: ITopic[] = result.map(
     (topic: Prisma.TopicUncheckedCreateInput, index: number): ITopic => {
@@ -68,6 +83,8 @@ export async function POST(request: Request) {
         ),
         questionsTotal: topic.maxQuestions!,
         data: topic.data,
+        questions: findSingle ? status[0] : [],
+        questionsOptions: findSingle ? questionOptions : [],
       };
     }
   );

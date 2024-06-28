@@ -36,7 +36,7 @@ model File {
   id        Int         @id @default(autoincrement()) @map(name: "fileid")
   name      String
   path      String      @unique
-  topicID   Int         @unique
+  topicID   Int         
   topic     Topic       @relation(fields: [topicID], references: [id])
 }
 
@@ -48,7 +48,7 @@ model Question {
   marked    Boolean             @default(false)
   selected  Int                 @default(-1)
   options   QuestionOptions[]
-  topicID   Int                 @unique
+  topicID   Int                 
   topic     Topic               @relation(fields: [topicID], references: [id])
 }
 
@@ -56,6 +56,6 @@ model QuestionOptions {
   id          Int         @id @default(autoincrement()) @map(name: "questionoptionid")
   option      String
   correct     Boolean
-  questionID  Int         @unique
+  questionID  Int         
   question    Question    @relation(fields: [questionID], references: [id])
 }

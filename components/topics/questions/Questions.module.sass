@@ -2,8 +2,7 @@
 @import "./styles/Colours.sass"
   
 .questionComponent
-  margin-bottom: 10vh
-  padding: 10px 20vw
+  padding: 0px 20vw
   text-align: left
 
 .questionNumber, .questionText
@@ -13,8 +12,10 @@
   &.questionNumber
     font-size: 2.25em
     font-weight: 700
+    margin: 0
   
   &.questionText
+    overflow-wrap: break-word
     font-size: 1.6em
     margin-top: 20px
     font-weight: 500
@@ -22,6 +23,7 @@
 .questionOptions, .questionNavigationWrapper
   display: flex
   margin: 10vh auto
+  overflow-wrap: break-word
 
   &.questionOptions
     flex-direction: column
@@ -42,8 +44,23 @@
   @extend .default-button
   background-color: $background-buttons
   text-align: left
-  height: 80px
+  min-height: 80px
+  height: fit-content
   margin: 15px 0
+
+.questionSubNavbar
+  display: flex
+  justify-content: space-between
+  padding: 10px 0
+
+  > h1
+    text-align: left
+
+  > button
+    @extend .default-button
+    min-width: 120px
+    font-size: 0.8em
+    background-color: rgba($background-buttons, 0.3)
 
 @media screen and (max-width: 768px)
 
