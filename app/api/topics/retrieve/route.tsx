@@ -61,6 +61,7 @@ export async function POST(request: Request) {
       })
     );
   }
+  // console.log(result);
 
   const processedResult: ITopic[] = result.map(
     (topic: Prisma.TopicUncheckedCreateInput, index: number): ITopic => {

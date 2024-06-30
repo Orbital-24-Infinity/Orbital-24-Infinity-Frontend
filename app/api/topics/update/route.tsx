@@ -12,18 +12,19 @@ export async function POST(request: Request) {
   const lastModified = getDateNow();
   const userEmail: string = await req?.user?.email;
   const validReq = await checkValidRequest(userEmail);
-  
+
   let result = {
     data: {
       id: undefined,
-      title: req.topic?.topicName || undefined,
+      title: req.topic?.topicName ?? undefined,
       maxQuestions: undefined,
       files: undefined,
       questions: undefined,
       user: undefined,
       userID: undefined,
       lastModified: lastModified,
-      data: req.topic?.data || undefined,
+      isGenerating: req.topic?.isGenerating ?? undefined,
+      data: req.topic?.data ?? undefined,
     },
     success: false,
     ...request,
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
         },
       });
 
-      await prisma.topic
+      const updateRes = await prisma.topic
         .update({
           data: result.data,
           where: {
