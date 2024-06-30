@@ -7,12 +7,12 @@ import { checkValidRequest } from "../../authentication/checker";
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  const res = await request.json();
+  const req = await request.json();
   let result = {};
-  if (await checkValidRequest(res.user.email)) {
+  if (await checkValidRequest(req.user.email)) {
     const user = await prisma.user.findUnique({
       where: {
-        email: res.user.email,
+        email: req.user.email,
       },
       select: {
         id: true,
@@ -20,13 +20,14 @@ export async function POST(request: Request) {
     });
     result = await prisma.topic.create({
       data: {
-        title: res.topic.title,
+        title: req.topic.title,
         maxQuestions: 10,
         userID: user!.id,
-        data: res.topic.data,
+        data: req.topic.data,
         isGenerating: true,
       },
     });
+    // console.log(result);
   }
   return NextResponse.json(result);
 }

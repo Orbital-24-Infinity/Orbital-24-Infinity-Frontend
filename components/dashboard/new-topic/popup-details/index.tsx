@@ -17,6 +17,47 @@ interface PopupDetailsProps {
   updateDataInstead?: boolean;
   topicID?: number;
 }
+interface Question {
+  question: string;
+  answers: string[];
+  correctAnswer: string;
+}
+
+const parseQuestions = (input: string): Question[] => {
+  const questionBlocks = input.split("#question: ").slice(1); // Split by `#question: ` and ignore the first empty element
+
+  const removeLeadingTrailingWhitespace = (str: string): string => {
+    let start = 0;
+    let end = str.length;
+
+    while (start < end && str[start] === " ") start++;
+    while (end > start && str[end - 1] === " ") end--;
+
+    return str.slice(start, end);
+  };
+
+  return questionBlocks.map((block) => {
+    const parts = block.split(" answer: ");
+    const questionPart = parts[0];
+    const answerPart = parts[1];
+
+    const questionParts = questionPart.split("#options: ");
+    const question = removeLeadingTrailingWhitespace(questionParts[0]);
+    const optionsString = questionParts[1];
+
+    // Match the options with a regex pattern
+    const optionsPattern = /[A-D]\. ([^#]+?)(?=(?: [A-D]\. |$))/g;
+    const answers: string[] = [];
+    let match;
+    while ((match = optionsPattern.exec(optionsString)) !== null) {
+      answers.push(removeLeadingTrailingWhitespace(match[1]));
+    }
+
+    const correctAnswer = removeLeadingTrailingWhitespace(answerPart);
+
+    return { question, answers, correctAnswer };
+  });
+};
 
 const PopupDetails = ({
   handleFetchTopics,
@@ -72,10 +113,52 @@ const PopupDetails = ({
                     user: user,
                     topic: { data: trainingData, title: newTopicName },
                   }),
-                }).then((res) => {
+                }).then(async (res) => {
+                  const newTopic = await res.json();
                   handleFetchTopics();
                   setNewTopicName("");
                   setTrainingData("");
+                  await fetch("/api/questions/generate", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      user: user,
+                      data: {
+                        title: newTopicName,
+                        passage: trainingData,
+                        id: newTopic.id,
+                      },
+                      topic: {
+                        isGenerating: false,
+                        topicID: newTopic.id,
+                      },
+                    }),
+                  }).then(async (res) => {
+                    // const r = await res.json();
+                    // console.log(parseQuestions(r.questions));
+                    // console.log({
+                    //   isGenerating: false,
+                    //   topicID: newTopic.id,
+                    // });
+                    // await fetch("/api/topics/update", {
+                    //   method: "POST",
+                    //   headers: {
+                    //     "Content-Type": "application/json",
+                    //   },
+                    //   body: JSON.stringify({
+                    //     user: user,
+                    //     topic: {
+                    //       isGenerating: false,
+                    //       topicID: newTopic.id,
+                    //     },
+                    //   }),
+                    // }).then(async (res) => {
+                    //   console.log(await res.json());
+                    // });
+                    handleFetchTopics();
+                  });
                 });
               } else {
                 return await fetch("/api/topics/update", {
