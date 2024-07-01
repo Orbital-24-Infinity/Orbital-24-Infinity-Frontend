@@ -138,25 +138,6 @@ const PopupDetails = ({
                   }).then(async (res) => {
                     // const r = await res.json();
                     // console.log(parseQuestions(r.questions));
-                    // console.log({
-                    //   isGenerating: false,
-                    //   topicID: newTopic.id,
-                    // });
-                    // await fetch("/api/topics/update", {
-                    //   method: "POST",
-                    //   headers: {
-                    //     "Content-Type": "application/json",
-                    //   },
-                    //   body: JSON.stringify({
-                    //     user: user,
-                    //     topic: {
-                    //       isGenerating: false,
-                    //       topicID: newTopic.id,
-                    //     },
-                    //   }),
-                    // }).then(async (res) => {
-                    //   console.log(await res.json());
-                    // });
                     handleFetchTopics();
                   });
                 });

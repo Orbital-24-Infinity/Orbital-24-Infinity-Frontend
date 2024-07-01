@@ -25,6 +25,7 @@ const AuthWrapper = ({
     loading: boolean;
     valid: boolean;
   }>({ loading: true, valid: false });
+  const [toImmediatelyRedirect, setToImmediatelyRedirect] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -44,7 +45,7 @@ const AuthWrapper = ({
           return { valid: valid, loading: false };
         });
         if (valid && toRedirect) {
-          router.push(redirectPath);
+          setToImmediatelyRedirect(true);
         }
       });
     };
@@ -58,6 +59,12 @@ const AuthWrapper = ({
       checkExpiredRequest();
     }
   }, [user, loading, router, toRedirect, redirectPath]);
+
+  useEffect(() => {
+    if (toImmediatelyRedirect) {
+      router.push(redirectPath);
+    }
+  }, [toImmediatelyRedirect, router, redirectPath]);
 
   return loading || checkExpiredAuth.loading ? (
     <LoadingIcon />
