@@ -63,34 +63,34 @@ export async function POST(request: Request) {
         //   console.log(result);
         // });
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: req.user.email,
-          },
-        });
+        // const user = await prisma.user.findUnique({
+        //   where: {
+        //     email: req.user.email,
+        //   },
+        // });
 
-        await prisma.topic.update({
-          data: {
-            id: undefined,
-            title: undefined,
-            maxQuestions: await prisma.question.count({
-              where: {
-                topicID: req.topic.topicID,
-              },
-            }),
-            files: undefined,
-            questions: undefined,
-            user: undefined,
-            userID: undefined,
-            lastModified: getDateNow(),
-            isGenerating: false,
-            data: undefined,
-          },
-          where: {
-            userID: user!.id,
-            id: req.topic.topicID,
-          },
-        });
+        // await prisma.topic.update({
+        //   data: {
+        //     id: undefined,
+        //     title: undefined,
+        //     maxQuestions: await prisma.question.count({
+        //       where: {
+        //         topicID: req.topic.topicID,
+        //       },
+        //     }),
+        //     files: undefined,
+        //     questions: undefined,
+        //     user: undefined,
+        //     userID: undefined,
+        //     lastModified: getDateNow(),
+        //     isGenerating: false,
+        //     data: undefined,
+        //   },
+        //   where: {
+        //     userID: user!.id,
+        //     id: req.topic.topicID,
+        //   },
+        // });
       });
     } catch (error) {
       console.log(error);
