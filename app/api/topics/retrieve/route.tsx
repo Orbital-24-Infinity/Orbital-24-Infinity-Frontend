@@ -75,11 +75,15 @@ export async function POST(request: Request) {
             : topic.lastModified!,
         status: topic.isGenerating
           ? TopicStatus.GENERATING
-          : status[index].length === topic.maxQuestions
+          : status[index].reduce(
+                (counter, each) =>
+                  each.marked === true ? counter + 1 : counter,
+                0
+              ) === topic.maxQuestions
             ? TopicStatus.COMPLETED
             : TopicStatus.ATTEMPTING,
         questionsAttempted: status[index].reduce(
-          (counter, each) => (each.selected !== -1 ? counter : counter + 1),
+          (counter, each) => (each.selected !== -1 ? counter + 1 : counter),
           0
         ),
         questionsTotal: topic.maxQuestions!,
