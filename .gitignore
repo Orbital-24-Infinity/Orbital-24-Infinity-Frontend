@@ -28,6 +28,7 @@ yarn-error.log*
 # local env files
 .env
 .env*.local
+project-infinity-2a93f-firebase-adminsdk-nuybt-467e1a746f.json
 
 # vercel
 .vercel
