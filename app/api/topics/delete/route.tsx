@@ -43,6 +43,11 @@ export async function DELETE(request: Request) {
         });
       })
     );
+    await prisma.file.deleteMany({
+      where: {
+        topicID: req.topic.topicID,
+      },
+    });
     result = await prisma.topic.delete({
       where: {
         id: req.topic.topicID,

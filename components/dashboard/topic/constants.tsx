@@ -17,4 +17,5 @@ export interface ITopic {
   data: string;
   questions: Prisma.QuestionUncheckedCreateInput[];
   questionsOptions: Prisma.QuestionOptionsUncheckedCreateInput[][];
+  files: Prisma.FileUncheckedCreateInput[];
 }

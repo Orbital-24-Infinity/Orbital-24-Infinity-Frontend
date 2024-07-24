@@ -65,3 +65,40 @@ $padding-distance: 30px
   margin: 0 $margin-distance
   font-size: 0.8em
   font-weight: bold
+
+.uploadedFiles
+  display: flex
+  flex-wrap: wrap
+  margin: 0 $margin-distance
+  width: stretch
+
+.uploadedFile
+  display: flex
+  justify-content: space-between
+  width: fit-content
+  padding: 0.5em calc(1.2em - 6px) 0.5em 1.2em
+  margin: 0 1.5em 1em 0
+  background-color: $background-buttons
+  border-radius: 15px
+
+  > *
+    margin: auto
+
+.deleteButton
+  @extend .default-button
+  padding: 6px
+  margin-left: 8px
+  height: 36px
+  background-color: rgba(0, 0, 0, 0)
+
+.dragAndDropArea
+  border: 2px dashed $background-buttons
+  border-radius: 15px
+  margin: $margin-distance
+  padding: $padding-distance
+  text-align: center
+  cursor: pointer
+  transition: 0.2s ease
+
+  &:hover
+    border: 2px dashed $foreground-secondary-rgb

@@ -35,7 +35,7 @@ model User {
 model File {
   id        Int         @id @default(autoincrement()) @map(name: "fileid")
   name      String
-  path      String      @unique
+  data      String      @default("")
   topicID   Int         
   topic     Topic       @relation(fields: [topicID], references: [id])
 }
@@ -50,6 +50,7 @@ model Question {
   options   QuestionOptions[]
   topicID   Int                 
   topic     Topic               @relation(fields: [topicID], references: [id])
+  refData   String              @default("") // to be used for notes reference after answered, stores section used to generate question
 }
 
 model QuestionOptions {

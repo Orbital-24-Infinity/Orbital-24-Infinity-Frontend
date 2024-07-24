@@ -1,5 +1,6 @@
 "use client";
 
+import { Prisma } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -27,6 +28,9 @@ const TopicComponent = () => {
   const searchParams = useParams();
   const { id } = searchParams;
   const thisTopicID = parseInt(typeof id === "string" ? id : id[0]);
+  const [linkedFiles, setLinkedFiles] = useState<
+    Prisma.FileUncheckedCreateInput[]
+  >([]);
 
   // const dummyData: IData = {
   //   title: "CS2040S Finals Practice",
@@ -139,7 +143,7 @@ const TopicComponent = () => {
           topicID: questions.topicID,
         }),
       }).then((res: Response) => res.json());
-      // console.log(res);
+      console.log(res);
       if (res.length <= 0 || res[0].questions.length <= 0) {
         router.push("/dashboard");
       } else {
@@ -161,6 +165,7 @@ const TopicComponent = () => {
             [] as IQuestion[]
           ),
         });
+        setLinkedFiles(res[0].files);
         setIsFetchingData(false);
       }
     };
@@ -212,6 +217,7 @@ const TopicComponent = () => {
             title={topic?.topicName ? topic.topicName : ""}
             fetchData={fetchData}
             topicID={questions.topicID}
+            linkedFiles={linkedFiles}
           />
           <QuestionComponent
             question={questions.questions[currentQuestion]}

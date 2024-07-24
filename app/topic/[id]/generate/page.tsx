@@ -34,7 +34,7 @@ const Generate = () => {
 
   return (
     <div>
-      <button style={someStyle} onClick={handleGenerate}>
+      {/* <button style={someStyle} onClick={handleGenerate}>
         Generate
       </button>
       <div>
@@ -48,7 +48,7 @@ const Generate = () => {
         <button style={someStyle} onClick={handleDelete}>
           Delete
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
