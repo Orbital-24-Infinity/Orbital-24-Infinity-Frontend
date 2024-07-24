@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   const req = await request.json();
-  let result = {};
+  let result: any = {};
   if (await checkValidRequest(req.user.email)) {
     const user = await prisma.user.findUnique({
       where: {
@@ -27,7 +27,18 @@ export async function POST(request: Request) {
         isGenerating: true,
       },
     });
-    // console.log(result);
+    if (req.topic.fileData) {
+      req.topic.fileData.forEach(async (eachFile: any, index: number) => {
+        await prisma.file.create({
+          data: {
+            topicID: result.id,
+            data: eachFile,
+            name: req.topic.fileName[index],
+          },
+        });
+      });
+    }
+    console.log("RESULT", result);
   }
   return NextResponse.json(result);
 }

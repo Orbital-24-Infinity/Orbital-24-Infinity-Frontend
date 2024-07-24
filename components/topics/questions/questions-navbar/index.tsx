@@ -1,4 +1,6 @@
 "use client";
+
+import { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -14,6 +16,7 @@ interface QuestionNavbarProps {
   title: string;
   topicID: number;
   fetchData: () => void;
+  linkedFiles: Prisma.FileUncheckedCreateInput[];
 }
 
 const QuestionNavbar = ({
@@ -21,6 +24,7 @@ const QuestionNavbar = ({
   title,
   topicID,
   fetchData,
+  linkedFiles,
 }: QuestionNavbarProps) => {
   const [user, loading, error] = useAuthState(auth);
   const [isEditMenuOpen, setIsEditMenuOpen] = useState(false);
@@ -92,6 +96,9 @@ const QuestionNavbar = ({
           setIsNewTopicDetailsOpen={setIsEditMenuOpen}
           updateDataInstead
           topicID={topicID}
+          fileIDs={linkedFiles ? linkedFiles.map((each) => each.id!) : []}
+          fileNames={linkedFiles ? linkedFiles.map((each) => each.name!) : []}
+          filesTexts={linkedFiles ? linkedFiles.map((each) => each.data!) : []}
         />
       )}
     </div>

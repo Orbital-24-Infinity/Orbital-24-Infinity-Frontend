@@ -1,9 +1,12 @@
-import { Dispatch, SetStateAction, useState, useRef } from "react";
+import * as pdfjs from "pdfjs-dist";
+import { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
+import { useDropzone } from "react-dropzone";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "@/app/firebase/config";
+import Icon, { Icons } from "@/components/icons";
 import Popup from "@/components/popup";
-import * as pdfjs from 'pdfjs-dist';
+
 import styles from "../NewTopic.module.sass";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
@@ -15,6 +18,9 @@ interface PopupDetailsProps {
   setIsNewTopicOpen?: Dispatch<SetStateAction<boolean>>;
   title?: string;
   data?: string;
+  filesTexts?: string[];
+  fileNames?: string[];
+  fileIDs?: number[];
   updateDataInstead?: boolean;
   topicID?: number;
 }
@@ -26,11 +32,15 @@ const PopupDetails = ({
   setIsNewTopicOpen = () => {},
   title = "",
   data = "",
+  filesTexts = [],
+  fileNames = [],
+  fileIDs = [],
   updateDataInstead = false,
   topicID = -1,
 }: PopupDetailsProps) => {
   const accentColour = "#289497";
   const errorColour = "#FF0000";
+  const ALLOWED_DOCTYPES = ["application/pdf"];
 
   const [user, loading, error] = useAuthState(auth);
 
@@ -38,85 +48,169 @@ const PopupDetails = ({
   const [trainingData, setTrainingData] = useState(data);
   const [highlightColourTrainingData, setHighlightColourTrainingData] =
     useState(accentColour);
-
-  const [extractedText, setExtractedText] = useState(""); // New state for extracted text
+  const [extractedTexts, setExtractedTexts] = useState<string[]>(filesTexts); // New state for extracted text
+  const [isIncorrectFileUploaded, setIsIncorrectUpload] = useState(false);
+  const [files, setFiles] = useState<string[]>(fileNames);
+  const [fileIDList, setFileIDs] = useState<number[]>(fileIDs);
+  const [filesToDelete, setFilesToDelete] = useState<number[]>([]);
   const [isExtracting, setIsExtracting] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState(""); // New state for file name
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setIsExtracting(true);
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    // console.log(acceptedFiles);
+    acceptedFiles.forEach((file) => {
+      handleProcessFile(file);
+    });
+  }, []);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  const handleProcessFile = async (file: File) => {
+    setIsIncorrectUpload(false);
+    if (ALLOWED_DOCTYPES.includes(file.type)) {
       setUploadedFileName(file.name);
       try {
         const text = await extractTextFromPDF(file);
-        setExtractedText(text); // Store extracted text in state
+        setExtractedTexts((prev) => {
+          return [...prev, text];
+        }); // Store extracted text in state
+        setFiles((prev) => {
+          return [...prev, file.name];
+        });
       } catch (error) {
-        console.error('Error extracting text from PDF:', error);
+        console.error("Error extracting text from PDF:", error);
+        setIsIncorrectUpload(true);
+      }
+    } else {
+      setIsIncorrectUpload(true);
+    }
+  };
+
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const files = event.target.files;
+    if (files) {
+      setIsExtracting(true);
+      for (let i = 0; i < files.length; i++) {
+        handleProcessFile(files[i]);
       }
       setIsExtracting(false);
     }
   };
-  
+
+  const deleteFile = (index: number) => {
+    const deleteIndex = (prev: any[], index: number) => {
+      const next = [...prev];
+      next.splice(index, 1);
+      return next;
+    };
+
+    setFiles((prev) => deleteIndex(prev, index));
+    setExtractedTexts((prev) => deleteIndex(prev, index));
+    setFilesToDelete((prev) => [...prev, fileIDList[index]]);
+    setFileIDs((prev) => deleteIndex(prev, index));
+  };
+
   const extractTextFromPDF = async (file: File): Promise<string> => {
     const arrayBuffer = await file.arrayBuffer();
     const pdf = await pdfjs.getDocument({ data: arrayBuffer }).promise;
-    let fullText = '';
+    let fullText = "";
 
     for (let i = 1; i <= pdf.numPages; i++) {
       const page = await pdf.getPage(i);
       const content = await page.getTextContent();
-      const pageText = content.items.map((item: any) => item.str).join(' ');
-      fullText += pageText + ' ';
+      const pageText = content.items.map((item: any) => item.str).join(" ");
+      fullText += pageText + " ";
     }
 
     return fullText.trim();
   };
-  
-  const appendExtractedText = () => {
-    setTrainingData(prevData => prevData + ' ' + extractedText);
-    setExtractedText(""); // Clear the extracted text after appending
-  };
+
+  // const appendExtractedText = () => {
+  //   setTrainingData((prevData) => prevData + " " + extractedText);
+  //   setExtractedText(""); // Clear the extracted text after appending
+  // };
 
   const handleGenerate = async () => {
-    const combinedText = trainingData + ' ' + extractedText;
-    if (combinedText.length < 250) {
+    const combinedText = trainingData + " " + extractedTexts.join("\n");
+    const handleReset = () => {
+      handleFetchTopics();
+      setNewTopicName("");
+      setTrainingData("");
+      setExtractedTexts([]);
+      setFiles([]);
+      setUploadedFileName("");
+      setFilesToDelete([]);
+    };
+
+    if (combinedText.length < 500) {
       setHighlightColourTrainingData(errorColour);
     } else {
       try {
         setIsNewTopicDetailsOpen(false);
         setIsLoadingTopics(true);
+
         if (!updateDataInstead) {
-          await fetch("/api/topics/new", {
+          const res = await fetch("/api/topics/new", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
               user: user,
-              topic: { data: combinedText, title: newTopicName },
+              topic: {
+                data: trainingData,
+                title: newTopicName,
+                fileData: extractedTexts,
+                fileName: files,
+              },
             }),
           });
+          const newTopic = await res.json();
+          console.log(newTopic);
+          const bodyToSend = JSON.stringify({
+            user: user,
+            data: {
+              title: newTopicName,
+              passage: combinedText,
+              id: newTopic.id,
+            },
+            topic: {
+              isGenerating: false,
+              topicID: newTopic.id,
+            },
+          });
+          handleReset();
+          await fetch("/api/questions/generate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: bodyToSend,
+          }).then(async (res) => {
+            handleFetchTopics();
+          });
         } else {
-          await fetch("/api/topics/update", {
+          return await fetch("/api/topics/update", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
               user: user,
-              topic: { data: combinedText, topicID: topicID },
+              topic: {
+                data: trainingData,
+                topicID: topicID,
+                fileData: extractedTexts,
+                fileName: files,
+                fileIDs: fileIDList,
+                filesToDelete: filesToDelete,
+              },
             }),
           });
         }
-        handleFetchTopics();
-        setNewTopicName("");
-        setTrainingData("");
-        setExtractedText("");
-        setUploadedFileName("");
       } catch (error) {
-        console.error('Error generating topic:', error);
+        console.error("Error generating topic:", error);
       }
     }
   };
@@ -130,7 +224,7 @@ const PopupDetails = ({
       }
       text={newTopicName}
       option1Text={updateDataInstead ? "Cancel" : "Back"}
-      option2Text={updateDataInstead ? "Update" : "Generate"}
+      option2Text={updateDataInstead ? "Save" : "Generate"}
       accentColour={accentColour}
       accentColourSecondary={accentColour}
       handleOption1={() => {
@@ -157,23 +251,36 @@ const PopupDetails = ({
           }}
         ></textarea>
         <div className={styles.uploadContainer}>
-          <input
-            type="file"
-            accept=".pdf"
-            onChange={handleFileChange}
-            style={{ display: 'none' }}
-            ref={fileInputRef}
-          />
-          <button 
-            onClick={() => fileInputRef.current?.click()}
-            className={styles.uploadPDFButton}
-            disabled={isExtracting}
+          <div className={styles.uploadedFiles}>
+            {files.map((file, index) => (
+              <div key={index} className={styles.uploadedFile}>
+                <span>{file}</span>
+                <button
+                  onClick={() => deleteFile(index)}
+                  className={styles.deleteButton}
+                >
+                  <Icon type={Icons.Close} />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div
+            {...getRootProps()}
+            className={styles.dragAndDropArea}
+            style={isIncorrectFileUploaded ? { borderColor: errorColour } : {}}
           >
-            {isExtracting ? 'Extracting...' : 'Upload PDF'}
-          </button>
-          {uploadedFileName && (
-            <span className={styles.fileName}>{uploadedFileName}</span>
-          )}
+            <input {...getInputProps()} accept={ALLOWED_DOCTYPES.join(", ")} />
+            {isDragActive ? (
+              <p style={isIncorrectFileUploaded ? { color: errorColour } : {}}>
+                Release to upload
+              </p>
+            ) : (
+              <p style={isIncorrectFileUploaded ? { color: errorColour } : {}}>
+                Upload/Drop .pdf files here...
+              </p>
+            )}
+          </div>
         </div>
         {highlightColourTrainingData === errorColour && (
           <p className={styles.errorShort}>

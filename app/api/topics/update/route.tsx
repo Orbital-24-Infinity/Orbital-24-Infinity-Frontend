@@ -9,6 +9,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   const req = await request.json();
+  console.log(req);
   const lastModified = getDateNow();
   const userEmail: string = await req?.user?.email;
   const validReq = await checkValidRequest(userEmail);
@@ -52,6 +53,41 @@ export async function POST(request: Request) {
         .catch((err) => {
           result.success = false;
         });
+
+      if (req.topic.fileData) {
+        req.topic.fileData.forEach(async (eachFile: any, index: number) => {
+          if (index < req.topic.fileIDs.length) {
+            await prisma.file.update({
+              data: {
+                id: undefined,
+                topicID: undefined,
+                data: eachFile,
+                name: req.topic.fileName[index],
+              },
+              where: {
+                id: req.topic.fileIDs[index],
+              },
+            });
+          } else {
+            await prisma.file.create({
+              data: {
+                topicID: req.topic.topicID,
+                data: eachFile,
+                name: req.topic.fileName[index],
+              },
+            });
+          }
+        });
+        if (req.topic.filesToDelete) {
+          req.topic.filesToDelete.forEach(async (fileID: number) => {
+            await prisma.file.delete({
+              where: {
+                id: fileID,
+              },
+            });
+          });
+        }
+      }
     }
   } catch {
     return NextResponse.json(result);

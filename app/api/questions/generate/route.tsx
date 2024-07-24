@@ -23,6 +23,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   const req = await request.json();
+  console.log(req);
   let result = {};
   if (
     (await checkValidRequest(req.user.email)) &&
@@ -48,9 +49,9 @@ export async function POST(request: Request) {
           body: JSON.stringify(rawData),
         }
       ).then(async (res: any) => {
-        console.log(res);
+        // console.log(res);
         result = await res.json();
-        console.log(result);
+        // console.log(result);
 
         // await fetch(
         //   `http://${process.env.BACKEND_DJANGO_HOST}/quizzes/questions/${req.topic.topicID}`,

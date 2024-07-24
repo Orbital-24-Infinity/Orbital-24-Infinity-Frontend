@@ -14,6 +14,7 @@ export async function POST(request: Request) {
   const validReq = await checkValidRequest(userEmail);
   const findSingle = req.single ? req.single : false;
   let result: any[] = [];
+  let linkedFiles: Prisma.FileUncheckedCreateInput[] = [];
 
   if (userEmail && validReq) {
     const user = await prisma.user.findUnique({
@@ -30,6 +31,11 @@ export async function POST(request: Request) {
         },
       });
       if (output != null) {
+        linkedFiles = await prisma.file.findMany({
+          where: {
+            topicID: req.topicID,
+          },
+        });
         result = [output];
       }
     } else {
@@ -90,6 +96,7 @@ export async function POST(request: Request) {
         data: topic.data,
         questions: findSingle ? status[0] : [],
         questionsOptions: findSingle ? questionOptions : [],
+        files: linkedFiles,
       };
     }
   );
