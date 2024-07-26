@@ -11,26 +11,31 @@ It is deployed on Vercel with [this](https://github.com/Orbital6039/Orbital-24-I
 ### First, install the relevant dependencies and libraries using
 
 ```bash
-yarn run install
-#or
 npm install
+#or
+yarn run install
 ```
 
-### Secondly, edit the .env file with the appropriate values.
+### Secondly, setup Firebase, Vercel with Postgres and edit the .env file with the appropriate values & host backend.
 
-- For live Postgres database and Firebase .env variables, you will have to request it from me (owner).
+- For live Vercel Postgres and Firebase .env variables, you will have to request it from me (owner).
 - For development purposes, please fork the repo and deploy your own Firebase (with Google Authentication) and Vercel app and fill in the variables yourself.
+- You will need to host your own backend as we do not provide a mock backend.
 
-### Thirdly, run the development server:
+### Thirdly, link Vercel and initialise Prisma.
+
+```bash
+vercel link
+npx prisma generate
+npx prisma db push
+```
+
+### Lastly, run the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 ## Deployment
@@ -38,17 +43,24 @@ bun dev
 If there is an update to the schema, run
 
 ```bash
-npx prisma db push
-```
-
-For initial data, run
-
-```bash
-npx prisma studio
+npx prisma db push --force-reset --accept-data-loss
 ```
 
 To edit the db with a GUI on localhost, run
 
 ```bash
-npx prisma generate
+npx prisma studio
+```
+
+- Since it's deployed on Vercel, it should automatically work once you push to the main branch.
+
+## To run Unit Testing
+
+- Rename .babelrc-test to .babelrc
+- Then run either of the commands
+
+```bash
+npm run test
+# or
+yarn test
 ```

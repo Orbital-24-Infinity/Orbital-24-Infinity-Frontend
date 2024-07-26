@@ -1,7 +1,7 @@
 "use client";
 import "../../styles/Dashboard.sass";
 
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "@/app/firebase/config";
@@ -13,7 +13,7 @@ import NavbarComponent from "@/components/navbar";
 
 import AuthWrapper from "../../components/firebase-auth/AuthWrapper";
 
-const DashboardComponent = () => {
+export const DashboardComponent = () => {
   // Dummy Data
   // const topics: ITopic[] = [
   //   {
@@ -72,19 +72,22 @@ const DashboardComponent = () => {
       body: JSON.stringify({
         user: user,
       }),
-    }).then((res: Response) => res.json());
-    res.map((topic) => {
-      topic.lastModified = new Date(topic.lastModified);
+    }).then((res: Response) => {
+      return res.json();
     });
-    setTopics(res);
+    if (res) {
+      res.map((topic) => {
+        topic.lastModified = new Date(topic.lastModified);
+      });
+    }
     setIsLoadingTopics(false);
   }, [user]);
 
   useEffect(() => {
-    if (user) {
+    if (user && isLoadingTopics) {
       handleFetchTopics();
     }
-  }, [user, handleFetchTopics]);
+  }, [user, handleFetchTopics, isLoadingTopics]);
 
   return (
     <div className="dashboardComponent">
@@ -100,9 +103,10 @@ const DashboardComponent = () => {
         )}
         {!isLoadingTopics && !isAuthLoading && topics.length === 0 && (
           <p className="emptyDashboard">
-            {
-              "It's rather empty here... What if you tried to click the New Topic button below?"
-            }
+            {(() => {
+              console.log("first");
+              return "It's rather empty here... What if you tried to click the New Topic button below?";
+            })()}
           </p>
         )}
         {!isLoadingTopics &&

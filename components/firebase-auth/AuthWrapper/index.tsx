@@ -1,6 +1,7 @@
 "use client";
+
 import { redirect, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "@/app/firebase/config";
@@ -44,18 +45,18 @@ const AuthWrapper = ({
         setCheckExpiredAuth((prev) => {
           return { valid: valid, loading: false };
         });
-        if (valid && toRedirect) {
+        if (valid && toRedirect && user) {
           setToImmediatelyRedirect(true);
         }
       });
     };
-    setCheckExpiredAuth((prev) => {
-      return {
-        ...prev,
-        loading: true,
-      };
-    });
     if (!loading) {
+      // setCheckExpiredAuth((prev) => {
+      //   return {
+      //     ...prev,
+      //     loading: true,
+      //   };
+      // });
       checkExpiredRequest();
     }
   }, [user, loading, router, toRedirect, redirectPath]);
@@ -66,12 +67,37 @@ const AuthWrapper = ({
     }
   }, [toImmediatelyRedirect, router, redirectPath]);
 
+  // useEffect(() => {
+  //   console.log(user, loading, router, toRedirect, redirectPath);
+  // }, [user, loading, router, toRedirect, redirectPath]);
+
+  // useEffect(() => {
+  //   console.log(
+  //     loading,
+  //     checkExpiredAuth.loading,
+  //     (error || !user) && !toRedirect,
+  //     !checkExpiredAuth.loading && !checkExpiredAuth.valid && !isLoginPage
+  //   );
+  //   console.log(
+  //     loading || checkExpiredAuth.loading
+  //       ? "a"
+  //       : ((error || !user) && !toRedirect) ||
+  //           (!checkExpiredAuth.loading &&
+  //             !checkExpiredAuth.valid &&
+  //             !isLoginPage)
+  //         ? "b"
+  //         : toRedirect && checkExpiredAuth.valid
+  //           ? "c"
+  //           : "d"
+  //   );
+  // }, [checkExpiredAuth, error, isLoginPage, loading, toRedirect, user]);
+
   return loading || checkExpiredAuth.loading ? (
     <LoadingIcon />
   ) : ((error || !user) && !toRedirect) ||
     (!checkExpiredAuth.loading && !checkExpiredAuth.valid && !isLoginPage) ? (
     redirect("/login")
-  ) : toRedirect && checkExpiredAuth.valid ? (
+  ) : user?.email && toRedirect && checkExpiredAuth.valid ? (
     redirect(redirectPath)
   ) : (
     children

@@ -1,3 +1,5 @@
+import React from "react";
+
 import styles from "./Icon.module.sass";
 
 export enum Icons {

@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 
 import Icon, { Icons } from "@/components/icons";
 import Popup from "@/components/popup";

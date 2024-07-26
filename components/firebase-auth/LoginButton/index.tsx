@@ -4,8 +4,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-import { auth } from "@/app/firebase/config";
-
+import { auth } from "../../../app/firebase/config";
 import styles from "./LoginButton.module.sass";
 
 const LoginButton = () => {
@@ -23,6 +22,8 @@ const LoginButton = () => {
         },
         body: JSON.stringify(result),
       });
+
+      console.log("Router push called"); // Debug log
       router.push("/dashboard");
     } catch (error) {
       return;
