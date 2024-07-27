@@ -23,7 +23,6 @@ const LoginButton = () => {
         body: JSON.stringify(result),
       });
 
-      console.log("Router push called"); // Debug log
       router.push("/dashboard");
     } catch (error) {
       return;

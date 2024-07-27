@@ -9,6 +9,7 @@ import React from "react";
 // import fetch from "../__mocks__/fetch";
 import { signInWithPopup } from "../__mocks__/firebase/auth";
 import { useRouter } from "../__mocks__/next/navigation";
+import Login from "../app/login/page";
 import LoginButton from "../components/firebase-auth/LoginButton";
 
 jest.mock("../../../app/firebase/config", () => ({
@@ -22,12 +23,45 @@ jest.mock("firebase/auth", () => ({
 
 jest.mock("next/navigation", () => ({
   useRouter: jest.fn(),
+  redirect: jest.fn(),
 }));
+
+jest.mock("react", () => ({
+  ...jest.requireActual("react"),
+}));
+
+jest.mock("@/app/firebase/config", () => ({
+  auth: jest.fn(),
+}));
+
+jest.mock("react-firebase-hooks/auth", () => ({
+  useAuthState: jest.fn(() => [
+    {
+      email: "orbital6039@gmail.com",
+    },
+    false,
+    undefined,
+  ]),
+}));
+
+let isAuthenticated = true;
+
+let mockPush = jest.fn();
+let mockRedirect = jest.fn();
+
+useRouter.mockReturnValue({
+  push: mockPush,
+  redirect: mockRedirect,
+});
 
 beforeAll(() => {
   global.fetch = jest.fn(() =>
-    Promise.resolve({ json: () => Promise.resolve({ a: "b" }) })
+    Promise.resolve({ json: () => Promise.resolve({ valid: isAuthenticated }) })
   );
+});
+
+beforeEach(() => {
+  jest.clearAllMocks(); // Reset mock call count before each test
 });
 
 afterEach(() => {
@@ -35,6 +69,18 @@ afterEach(() => {
 });
 
 describe("Login", () => {
+  describe("Authenticated", () => {
+    it("should redirect to dashboard if authenticated", async () => {
+      render(<Login />);
+
+      await waitFor(() => {
+        expect(mockPush).toHaveBeenCalledWith("/dashboard");
+      }).then(() => {
+        isAuthenticated = false;
+      });
+    });
+  });
+
   describe("Render", () => {
     it("should have a logo", () => {
       // Arrange
@@ -79,11 +125,6 @@ describe("Login", () => {
         user: { uid: "123", displayName: "Test User" },
       });
       signInWithPopup.mockImplementation(mockSignInWithPopup);
-
-      const mockPush = jest.fn();
-      useRouter.mockImplementation(() => ({
-        push: mockPush,
-      }));
 
       render(<LoginButton />);
 

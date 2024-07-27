@@ -1,6 +1,6 @@
 "use client";
 import { Prisma } from "@prisma/client";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "@/app/firebase/config";
@@ -16,6 +16,7 @@ export interface IQuestionOptions {
 
 export interface IQuestion {
   question: string;
+  refData: string;
   selected: number;
   questionID: number;
   options: Prisma.QuestionOptionsUncheckedCreateInput[];
@@ -45,6 +46,7 @@ const QuestionComponent = ({
 }: QuestionComponentProps) => {
   const [user, isAuthLoading, error] = useAuthState(auth);
   const [selectedOption, setSelectedOption] = useState(question.selected);
+  const [isReferenceShown, setIsReferenceShown] = useState(false);
 
   const handleUpdatedSelection = async (newSelection: number) => {
     setSelectedOption(newSelection);
@@ -86,8 +88,15 @@ const QuestionComponent = ({
             Reveal Answer
           </button>
         )}
+        {isMarked && (
+          <button onClick={(e) => setIsReferenceShown((prev) => !prev)}>
+            {isReferenceShown ? "Hide" : "Show"} Reference
+          </button>
+        )}
       </div>
+
       <h1 className={styles.questionText}>{question.question}</h1>
+      {isReferenceShown && <p className={styles.refData}>{question.refData}</p>}
 
       <div className={styles.questionOptions}>
         {question.options.map(

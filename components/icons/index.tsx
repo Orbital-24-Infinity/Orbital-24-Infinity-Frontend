@@ -12,6 +12,12 @@ export enum Icons {
 
 export type IconKeys = keyof typeof Icons;
 
+export const getIconName = (iconPath: string): IconKeys | undefined => {
+  return Object.keys(Icons).find(
+    (key) => Icons[key as IconKeys] === iconPath
+  ) as IconKeys | undefined;
+};
+
 interface IconProps {
   type: Icons;
   size?: number;
@@ -39,6 +45,7 @@ const Icon = ({
 }: IconProps) => {
   return (
     <svg
+      aria-label={getIconName(type)}
       xmlns="http://www.w3.org/2000/svg"
       height={typeof height === "number" ? String(height) + "px" : height}
       viewBox={viewBox}

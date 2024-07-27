@@ -21,7 +21,7 @@ export async function POST(request: Request) {
     result = await prisma.topic.create({
       data: {
         title: req.topic.title,
-        maxQuestions: 10,
+        maxQuestions: 0,
         userID: user!.id,
         data: req.topic.data,
         isGenerating: true,
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
         });
       });
     }
-    console.log("RESULT", result);
+    // console.log("RESULT", result);
   }
   return NextResponse.json(result);
 }

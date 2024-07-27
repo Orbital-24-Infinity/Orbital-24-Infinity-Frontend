@@ -1,10 +1,12 @@
 import "@/styles/Topic.sass";
 
+import React from "react";
+
 import AuthWrapper from "@/components/firebase-auth/AuthWrapper";
 import NavbarComponent from "@/components/navbar";
 import TopicComponent from "@/components/topics";
 
-const TopicPage = async () => {
+const TopicPage = () => {
   return (
     <div style={{ height: "100vh" }}>
       <AuthWrapper>

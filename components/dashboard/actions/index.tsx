@@ -1,3 +1,5 @@
+import React from "react";
+
 import { TopicStatus } from "@/components/dashboard/topic/constants";
 
 import styles from "./Actions.module.sass";
@@ -33,14 +35,14 @@ const ActionButton = ({ type, id, handleFetchTopics }: IActionButtonProps) => {
     ),
     [TopicStatus.COMPLETED]: (
       <ActionButtonWrapper>
-        <ManageButton />
+        {/* <ManageButton /> */}
         <ViewButton id={id} />
         <GenerateButton id={id} handleFetchTopics={handleFetchTopics} />
       </ActionButtonWrapper>
     ),
     [TopicStatus.ATTEMPTING]: (
       <ActionButtonWrapper>
-        <ManageButton />
+        {/* <ManageButton /> */}
         <ViewButton id={id} />
       </ActionButtonWrapper>
     ),

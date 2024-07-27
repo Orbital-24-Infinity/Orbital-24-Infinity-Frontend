@@ -2,7 +2,7 @@
 
 import { Prisma } from "@prisma/client";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "@/app/firebase/config";
@@ -111,6 +111,7 @@ const TopicComponent = () => {
     questions: [
       {
         question: "",
+        refData: "",
         questionID: -1,
         selected: -1,
         options: [{ id: -1, questionID: -1, option: "", correct: false }],
@@ -143,7 +144,7 @@ const TopicComponent = () => {
           topicID: questions.topicID,
         }),
       }).then((res: Response) => res.json());
-      console.log(res);
+      // console.log(res);
       if (res.length <= 0 || res[0].questions.length <= 0) {
         router.push("/dashboard");
       } else {
@@ -156,6 +157,7 @@ const TopicComponent = () => {
               acc.concat([
                 {
                   question: eachOption.question,
+                  refData: eachOption.refData ?? "",
                   questionID: eachOption.id ?? -1,
                   selected: eachOption.selected ? eachOption.selected : -1,
                   options: res[0].questionsOptions[index],

@@ -13,7 +13,7 @@ import NavbarComponent from "@/components/navbar";
 
 import AuthWrapper from "../../components/firebase-auth/AuthWrapper";
 
-export const DashboardComponent = () => {
+const DashboardComponent = () => {
   // Dummy Data
   // const topics: ITopic[] = [
   //   {
@@ -76,9 +76,11 @@ export const DashboardComponent = () => {
       return res.json();
     });
     if (res) {
+      // console.log(res);
       res.map((topic) => {
         topic.lastModified = new Date(topic.lastModified);
       });
+      setTopics(res);
     }
     setIsLoadingTopics(false);
   }, [user]);
@@ -104,7 +106,6 @@ export const DashboardComponent = () => {
         {!isLoadingTopics && !isAuthLoading && topics.length === 0 && (
           <p className="emptyDashboard">
             {(() => {
-              console.log("first");
               return "It's rather empty here... What if you tried to click the New Topic button below?";
             })()}
           </p>
@@ -115,6 +116,7 @@ export const DashboardComponent = () => {
             <Topic
               topic={topic}
               setTopic={(newName: string, lastModified?: Date) => {
+                // console.log("LOOPING THROUGH");
                 setTopics((prev) => {
                   return prev.map((prevTopic) =>
                     prevTopic.topicID === topic.topicID

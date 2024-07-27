@@ -67,31 +67,6 @@ const AuthWrapper = ({
     }
   }, [toImmediatelyRedirect, router, redirectPath]);
 
-  // useEffect(() => {
-  //   console.log(user, loading, router, toRedirect, redirectPath);
-  // }, [user, loading, router, toRedirect, redirectPath]);
-
-  // useEffect(() => {
-  //   console.log(
-  //     loading,
-  //     checkExpiredAuth.loading,
-  //     (error || !user) && !toRedirect,
-  //     !checkExpiredAuth.loading && !checkExpiredAuth.valid && !isLoginPage
-  //   );
-  //   console.log(
-  //     loading || checkExpiredAuth.loading
-  //       ? "a"
-  //       : ((error || !user) && !toRedirect) ||
-  //           (!checkExpiredAuth.loading &&
-  //             !checkExpiredAuth.valid &&
-  //             !isLoginPage)
-  //         ? "b"
-  //         : toRedirect && checkExpiredAuth.valid
-  //           ? "c"
-  //           : "d"
-  //   );
-  // }, [checkExpiredAuth, error, isLoginPage, loading, toRedirect, user]);
-
   return loading || checkExpiredAuth.loading ? (
     <LoadingIcon />
   ) : ((error || !user) && !toRedirect) ||

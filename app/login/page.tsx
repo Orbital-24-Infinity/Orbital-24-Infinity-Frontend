@@ -7,7 +7,7 @@ import AuthWrapper from "@/components/firebase-auth/AuthWrapper";
 
 import LoginButton from "../../components/firebase-auth/LoginButton";
 
-const Login = async () => {
+const Login = () => {
   const defaultRedirectPath = "/dashboard";
 
   return (

@@ -1,5 +1,11 @@
 import * as pdfjs from "pdfjs-dist";
-import { Dispatch, SetStateAction, useCallback, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useRef,
+  useState,
+} from "react";
 import { useDropzone } from "react-dropzone";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -11,6 +17,7 @@ import styles from "../NewTopic.module.sass";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
+const ALLOWED_DOCTYPES = ["application/pdf", "text/plain"];
 interface PopupDetailsProps {
   handleFetchTopics: () => any;
   setIsLoadingTopics?: Dispatch<SetStateAction<boolean>>;
@@ -40,7 +47,6 @@ const PopupDetails = ({
 }: PopupDetailsProps) => {
   const accentColour = "#289497";
   const errorColour = "#FF0000";
-  const ALLOWED_DOCTYPES = ["application/pdf"];
 
   const [user, loading, error] = useAuthState(auth);
 
@@ -58,45 +64,44 @@ const PopupDetails = ({
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     // console.log(acceptedFiles);
+
+    const handleProcessFile = async (file: File) => {
+      setIsIncorrectUpload(false);
+      if (ALLOWED_DOCTYPES.includes(file.type)) {
+        setUploadedFileName(file.name);
+        try {
+          if (file.type === "text/plain") {
+            const text = await file.text();
+            console.log(text);
+            setExtractedTexts((prev) => {
+              return [...prev, text];
+            }); // Store extracted text in state
+            setFiles((prev) => {
+              return [...prev, file.name];
+            });
+          } else if (file.type === "application/pdf") {
+            const text = await extractTextFromPDF(file);
+            setExtractedTexts((prev) => {
+              return [...prev, text];
+            }); // Store extracted text in state
+            setFiles((prev) => {
+              return [...prev, file.name];
+            });
+          }
+        } catch (error) {
+          // console.error("Error extracting text from PDF:", error);
+          setIsIncorrectUpload(true);
+        }
+      } else {
+        setIsIncorrectUpload(true);
+      }
+    };
+
     acceptedFiles.forEach((file) => {
       handleProcessFile(file);
     });
   }, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
-  const handleProcessFile = async (file: File) => {
-    setIsIncorrectUpload(false);
-    if (ALLOWED_DOCTYPES.includes(file.type)) {
-      setUploadedFileName(file.name);
-      try {
-        const text = await extractTextFromPDF(file);
-        setExtractedTexts((prev) => {
-          return [...prev, text];
-        }); // Store extracted text in state
-        setFiles((prev) => {
-          return [...prev, file.name];
-        });
-      } catch (error) {
-        console.error("Error extracting text from PDF:", error);
-        setIsIncorrectUpload(true);
-      }
-    } else {
-      setIsIncorrectUpload(true);
-    }
-  };
-
-  const handleFileChange = async (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = event.target.files;
-    if (files) {
-      setIsExtracting(true);
-      for (let i = 0; i < files.length; i++) {
-        handleProcessFile(files[i]);
-      }
-      setIsExtracting(false);
-    }
-  };
 
   const deleteFile = (index: number) => {
     const deleteIndex = (prev: any[], index: number) => {
@@ -167,7 +172,7 @@ const PopupDetails = ({
             }),
           });
           const newTopic = await res.json();
-          console.log(newTopic);
+          // console.log(newTopic);
           const bodyToSend = JSON.stringify({
             user: user,
             data: {
@@ -210,7 +215,7 @@ const PopupDetails = ({
           });
         }
       } catch (error) {
-        console.error("Error generating topic:", error);
+        // console.error("Error generating topic:", error);
       }
     }
   };
@@ -277,7 +282,7 @@ const PopupDetails = ({
               </p>
             ) : (
               <p style={isIncorrectFileUploaded ? { color: errorColour } : {}}>
-                Upload/Drop .pdf files here...
+                Upload/Drop .pdf or .txt files here...
               </p>
             )}
           </div>
