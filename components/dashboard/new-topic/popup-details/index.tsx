@@ -276,12 +276,23 @@ const PopupDetails = ({
             style={isIncorrectFileUploaded ? { borderColor: errorColour } : {}}
           >
             <input {...getInputProps()} accept={ALLOWED_DOCTYPES.join(", ")} />
+            <Icon
+              type={Icons.Upload}
+              className={styles.uploadIcon}
+              ariaInvalid={isIncorrectFileUploaded}
+            />
             {isDragActive ? (
-              <p style={isIncorrectFileUploaded ? { color: errorColour } : {}}>
+              <p
+                style={isIncorrectFileUploaded ? { color: errorColour } : {}}
+                className={styles.uploadTexts}
+              >
                 Release to upload
               </p>
             ) : (
-              <p style={isIncorrectFileUploaded ? { color: errorColour } : {}}>
+              <p
+                style={isIncorrectFileUploaded ? { color: errorColour } : {}}
+                className={styles.uploadTexts}
+              >
                 Upload/Drop .pdf or .txt files here...
               </p>
             )}

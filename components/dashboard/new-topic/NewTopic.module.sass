@@ -95,10 +95,25 @@ $padding-distance: 30px
   border: 2px dashed $background-buttons
   border-radius: 15px
   margin: $margin-distance/2 $margin-distance $margin-distance $margin-distance
-  padding: $padding-distance
+  padding: $padding-distance * 2
   text-align: center
   cursor: pointer
   transition: 0.2s ease
 
   &:hover
     border: 2px dashed $foreground-secondary-rgb
+
+    p, svg[aria-invalid="false"]
+      color: $foreground-secondary-rgb
+      fill: $foreground-secondary-rgb
+      transition: 0.2s ease
+
+.uploadIcon[aria-invalid="false"]
+  fill: $background-buttons
+  transition: 0.2s ease
+
+.uploadTexts
+  margin-top: 0
+  font-size: 0.8em
+  color: $background-buttons
+  transition: 0.2s ease
