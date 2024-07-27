@@ -155,13 +155,13 @@ const TopicComponent = () => {
       ) {
         router.push("/dashboard");
       } else {
-        let firstUnanswered = 0;
+        let firstUnanswered = -1;
         setTopic(res[0]);
         setQuestions({
           title: res[0].topicName,
           topicID: thisTopicID,
           questions: res[0].questions.reduce((acc, eachOption, index) => {
-            if (eachOption.selected === -1 && firstUnanswered === 0) {
+            if (eachOption.selected === -1 && firstUnanswered === -1) {
               firstUnanswered = index;
             }
             return acc.concat([
