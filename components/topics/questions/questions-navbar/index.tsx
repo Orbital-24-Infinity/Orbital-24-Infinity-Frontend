@@ -2,7 +2,7 @@
 
 import { Prisma } from "@prisma/client";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "@/app/firebase/config";

@@ -1,7 +1,7 @@
 "use client";
 import "../../styles/Dashboard.sass";
 
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "@/app/firebase/config";
@@ -72,19 +72,24 @@ const DashboardComponent = () => {
       body: JSON.stringify({
         user: user,
       }),
-    }).then((res: Response) => res.json());
-    res.map((topic) => {
-      topic.lastModified = new Date(topic.lastModified);
+    }).then((res: Response) => {
+      return res.json();
     });
-    setTopics(res);
+    if (res) {
+      // console.log(res);
+      res.map((topic) => {
+        topic.lastModified = new Date(topic.lastModified);
+      });
+      setTopics(res);
+    }
     setIsLoadingTopics(false);
   }, [user]);
 
   useEffect(() => {
-    if (user) {
+    if (user && isLoadingTopics) {
       handleFetchTopics();
     }
-  }, [user, handleFetchTopics]);
+  }, [user, handleFetchTopics, isLoadingTopics]);
 
   return (
     <div className="dashboardComponent">
@@ -100,9 +105,9 @@ const DashboardComponent = () => {
         )}
         {!isLoadingTopics && !isAuthLoading && topics.length === 0 && (
           <p className="emptyDashboard">
-            {
-              "It's rather empty here... What if you tried to click the New Topic button below?"
-            }
+            {(() => {
+              return "It's rather empty here... What if you tried to click the New Topic button below?";
+            })()}
           </p>
         )}
         {!isLoadingTopics &&
@@ -111,6 +116,7 @@ const DashboardComponent = () => {
             <Topic
               topic={topic}
               setTopic={(newName: string, lastModified?: Date) => {
+                // console.log("LOOPING THROUGH");
                 setTopics((prev) => {
                   return prev.map((prevTopic) =>
                     prevTopic.topicID === topic.topicID

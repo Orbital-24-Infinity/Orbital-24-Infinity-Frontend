@@ -1,5 +1,5 @@
 "use client";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { getDateNow } from "@/app/api/login/date";
@@ -101,7 +101,11 @@ const Topic = ({
       </p>
 
       <div className={styles.topicFooter}>
-        <ActionButton type={topic.status} id={topic.topicID} />
+        <ActionButton
+          type={topic.status}
+          id={topic.topicID}
+          handleFetchTopics={handleFetchTopics}
+        />
         <p className={styles.topicLastModified}>
           Last Modified: {topic.lastModified?.toLocaleDateString()}{" "}
           {topic.lastModified.toLocaleTimeString()}

@@ -1,3 +1,5 @@
+import React from "react";
+
 import styles from "./Loading.module.sass";
 import LoadingComponent from "./LoadingComponent";
 

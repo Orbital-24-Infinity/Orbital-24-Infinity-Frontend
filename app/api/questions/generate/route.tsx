@@ -23,7 +23,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   const req = await request.json();
-  console.log(req);
+  // console.log(req);
   let result = {};
   if (
     (await checkValidRequest(req.user.email)) &&
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
         // });
       });
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
   return NextResponse.json(result);

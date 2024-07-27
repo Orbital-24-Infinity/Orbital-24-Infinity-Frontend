@@ -1,3 +1,5 @@
+import React from "react";
+
 import { TopicStatus } from "@/components/dashboard/topic/constants";
 
 import styles from "./Actions.module.sass";
@@ -8,6 +10,7 @@ import ViewButton from "./view";
 interface IActionButtonProps {
   type: TopicStatus;
   id: number;
+  handleFetchTopics: () => any;
 }
 
 interface IActionButtonWrapper {
@@ -18,7 +21,7 @@ const ActionButtonWrapper = ({ children }: IActionButtonWrapper) => {
   return <div className={styles.actionButtonsWrapper}>{children}</div>;
 };
 
-const ActionButton = ({ type, id }: IActionButtonProps) => {
+const ActionButton = ({ type, id, handleFetchTopics }: IActionButtonProps) => {
   return {
     // [TopicStatus.CREATED]: (
     //   <ActionButtonWrapper>
@@ -32,14 +35,14 @@ const ActionButton = ({ type, id }: IActionButtonProps) => {
     ),
     [TopicStatus.COMPLETED]: (
       <ActionButtonWrapper>
-        <ManageButton />
+        {/* <ManageButton /> */}
         <ViewButton id={id} />
-        <GenerateButton />
+        <GenerateButton id={id} handleFetchTopics={handleFetchTopics} />
       </ActionButtonWrapper>
     ),
     [TopicStatus.ATTEMPTING]: (
       <ActionButtonWrapper>
-        <ManageButton />
+        {/* <ManageButton /> */}
         <ViewButton id={id} />
       </ActionButtonWrapper>
     ),

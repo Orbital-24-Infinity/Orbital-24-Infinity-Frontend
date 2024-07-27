@@ -1,9 +1,11 @@
 "use client";
+import React from "react";
+
 import styles from "../Actions.module.sass";
 import manageStyles from "./Manage.module.sass";
 
 const handleClick = (e: any) => {
-  console.log("Clicked");
+  // console.log("Clicked");
 };
 
 const ManageButton = ({}) => {

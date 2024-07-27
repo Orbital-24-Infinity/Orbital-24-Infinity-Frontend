@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   const req = await request.json();
-  console.log(req);
+  // console.log(req);
   const lastModified = getDateNow();
   const userEmail: string = await req?.user?.email;
   const validReq = await checkValidRequest(userEmail);
