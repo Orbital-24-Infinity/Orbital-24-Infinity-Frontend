@@ -6,7 +6,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 
 import { auth } from "@/app/firebase/config";
-import { ITopic } from "@/components/dashboard/topic/constants";
+import { ITopic, TopicStatus } from "@/components/dashboard/topic/constants";
 
 import LoadingComponent from "../firebase-auth/Loading/LoadingComponent";
 import QuestionComponent, { IQuestion } from "./questions";
@@ -123,7 +123,10 @@ const TopicComponent = () => {
   const updateQuestionsSelection = (newSelection: number) => {
     setQuestions((prev) => {
       let newQuestions = [...prev.questions];
-      newQuestions[currentQuestion].selected = newSelection;
+      newQuestions[currentQuestion].selected = Math.max(
+        Math.min(questions.questions.length - 1, newSelection),
+        0
+      );
       return {
         ...prev,
         questions: newQuestions,
@@ -145,28 +148,35 @@ const TopicComponent = () => {
         }),
       }).then((res: Response) => res.json());
       // console.log(res);
-      if (res.length <= 0 || res[0].questions.length <= 0) {
+      if (
+        res.length <= 0 ||
+        res[0].questions.length <= 0 ||
+        res[0].status === TopicStatus.GENERATING
+      ) {
         router.push("/dashboard");
       } else {
+        let firstUnanswered = 0;
         setTopic(res[0]);
         setQuestions({
           title: res[0].topicName,
           topicID: thisTopicID,
-          questions: res[0].questions.reduce(
-            (acc, eachOption, index) =>
-              acc.concat([
-                {
-                  question: eachOption.question,
-                  refData: eachOption.refData ?? "",
-                  questionID: eachOption.id ?? -1,
-                  selected: eachOption.selected ? eachOption.selected : -1,
-                  options: res[0].questionsOptions[index],
-                  marked: eachOption.marked ?? false,
-                },
-              ]),
-            [] as IQuestion[]
-          ),
+          questions: res[0].questions.reduce((acc, eachOption, index) => {
+            if (eachOption.selected === -1 && firstUnanswered === 0) {
+              firstUnanswered = index;
+            }
+            return acc.concat([
+              {
+                question: eachOption.question,
+                refData: eachOption.refData ?? "",
+                questionID: eachOption.id ?? -1,
+                selected: eachOption.selected ? eachOption.selected : -1,
+                options: res[0].questionsOptions[index],
+                marked: eachOption.marked ?? false,
+              },
+            ]);
+          }, [] as IQuestion[]),
         });
+        setCurrentQuestion(firstUnanswered);
         setLinkedFiles(res[0].files);
         setIsFetchingData(false);
       }

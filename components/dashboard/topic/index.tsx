@@ -55,7 +55,6 @@ const Topic = ({
               topic: topic,
             }),
           }).then(async (res: any) => {
-            console.log("UPDATING");
             res = await res.json();
             if (res.success) {
               setTopic(topic.topicName, new Date(res.data.lastModified));
