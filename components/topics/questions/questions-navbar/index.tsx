@@ -17,6 +17,7 @@ interface QuestionNavbarProps {
   topicID: number;
   fetchData: () => void;
   linkedFiles: Prisma.FileUncheckedCreateInput[];
+  handleTitleChange: (title: string) => void;
 }
 
 const QuestionNavbar = ({
@@ -25,6 +26,7 @@ const QuestionNavbar = ({
   topicID,
   fetchData,
   linkedFiles,
+  handleTitleChange,
 }: QuestionNavbarProps) => {
   const [user, loading, error] = useAuthState(auth);
   const [isEditMenuOpen, setIsEditMenuOpen] = useState(false);
@@ -48,10 +50,14 @@ const QuestionNavbar = ({
 
     const timeoutHandle = setTimeout(() => {
       handleUpdatedTitle();
-    }, 2500);
+    }, 1500);
+
+    if (currentTitle && title !== currentTitle) {
+      handleTitleChange(currentTitle);
+    }
 
     return () => clearTimeout(timeoutHandle);
-  }, [currentTitle, topicID, user]);
+  }, [currentTitle, topicID, user, handleTitleChange, title]);
 
   return (
     <div className={styles.questionNavbar}>
