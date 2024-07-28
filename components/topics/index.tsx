@@ -32,79 +32,6 @@ const TopicComponent = () => {
     Prisma.FileUncheckedCreateInput[]
   >([]);
 
-  // const dummyData: IData = {
-  //   title: "CS2040S Finals Practice",
-  //   topicID: thisTopicID,
-  //   questions: [
-  //     {
-  //       question: "What is the time complexity of binary search?",
-  //       selected: 3,
-  //       options: [
-  //         {
-  //           option: "O(n)",
-  //           correct: false,
-  //         },
-  //         {
-  //           option: "O(log n)",
-  //           correct: true,
-  //         },
-  //         {
-  //           option: "O(n log n)",
-  //           correct: false,
-  //         },
-  //         {
-  //           option: "O(n^2)",
-  //           correct: false,
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       question: "What is the time complexity of quicksort?",
-  //       selected: -1,
-  //       options: [
-  //         {
-  //           option: "O(n)",
-  //           correct: false,
-  //         },
-  //         {
-  //           option: "O(log n)",
-  //           correct: false,
-  //         },
-  //         {
-  //           option: "O(n log n)",
-  //           correct: true,
-  //         },
-  //         {
-  //           option: "O(n^2)",
-  //           correct: false,
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       question: "What is the time complexity of mergesort?",
-  //       selected: -1,
-  //       options: [
-  //         {
-  //           option: "O(n)",
-  //           correct: false,
-  //         },
-  //         {
-  //           option: "O(log n)",
-  //           correct: false,
-  //         },
-  //         {
-  //           option: "O(n log n)",
-  //           correct: true,
-  //         },
-  //         {
-  //           option: "O(n^2)",
-  //           correct: false,
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // };
-
   const [questions, setQuestions] = useState<IData>({
     title: "",
     topicID: thisTopicID,
@@ -121,17 +48,16 @@ const TopicComponent = () => {
   });
 
   const updateQuestionsSelection = (newSelection: number) => {
-    setQuestions((prev) => {
-      let newQuestions = [...prev.questions];
-      newQuestions[currentQuestion].selected = Math.max(
-        Math.min(questions.questions.length - 1, newSelection),
-        0
-      );
-      return {
-        ...prev,
-        questions: newQuestions,
-      };
-    });
+    if (newSelection >= 0) {
+      setQuestions((prev) => {
+        let newQuestions = [...prev.questions];
+        newQuestions[currentQuestion].selected = newSelection;
+        return {
+          ...prev,
+          questions: newQuestions,
+        };
+      });
+    }
   };
 
   const fetchData = useCallback(() => {
@@ -147,7 +73,6 @@ const TopicComponent = () => {
           topicID: questions.topicID,
         }),
       }).then((res: Response) => res.json());
-      // console.log(res);
       if (
         res.length <= 0 ||
         res[0].questions.length <= 0 ||
@@ -176,7 +101,7 @@ const TopicComponent = () => {
             ]);
           }, [] as IQuestion[]),
         });
-        setCurrentQuestion(firstUnanswered);
+        setCurrentQuestion(firstUnanswered === -1 ? 0 : firstUnanswered);
         setLinkedFiles(res[0].files);
         setIsFetchingData(false);
       }
@@ -212,6 +137,13 @@ const TopicComponent = () => {
     });
   };
 
+  const handleTitleChange = async (newName: string) => {
+    setQuestions((prev) => ({
+      ...prev,
+      title: newName,
+    }));
+  };
+
   useEffect(() => {
     if (!topic && user && !isAuthLoading) {
       fetchData();
@@ -226,10 +158,11 @@ const TopicComponent = () => {
         <div>
           <QuestionNavbar
             data={topic?.data ? topic.data : ""}
-            title={topic?.topicName ? topic.topicName : ""}
+            title={questions?.title ? questions.title : ""}
             fetchData={fetchData}
             topicID={questions.topicID}
             linkedFiles={linkedFiles}
+            handleTitleChange={handleTitleChange}
           />
           <QuestionComponent
             question={questions.questions[currentQuestion]}
@@ -238,7 +171,9 @@ const TopicComponent = () => {
             handleMark={handleMarking}
             lastQuestionNumber={questions.questions.length - 1}
             onPrevQn={(newSelection: number) => {
-              updateQuestionsSelection(newSelection);
+              if (newSelection >= 0) {
+                updateQuestionsSelection(newSelection);
+              }
               setCurrentQuestion((prev) => Math.max(0, prev - 1));
             }}
             topicID={topic?.topicID ?? -1}

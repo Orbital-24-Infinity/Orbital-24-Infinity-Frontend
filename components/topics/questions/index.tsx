@@ -50,6 +50,7 @@ const QuestionComponent = ({
 
   const handleUpdatedSelection = async (newSelection: number) => {
     setSelectedOption(newSelection);
+    console.log(newSelection);
     // console.log(question, newSelection);
     // console.log({
     //   id: question.questionID,
@@ -75,9 +76,16 @@ const QuestionComponent = ({
   };
 
   useEffect(() => {
-    // console.log(question);
+    console.log(question);
     setSelectedOption(question.selected);
   }, [question]);
+
+  useEffect(() => {
+    // console.log(question);
+    if (!isMarked) {
+      setIsReferenceShown(false);
+    }
+  }, [isMarked]);
 
   return (
     <div className={styles.questionComponent}>
