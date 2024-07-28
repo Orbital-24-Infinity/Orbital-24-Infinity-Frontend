@@ -130,6 +130,7 @@ const Topic = ({
               }),
             }).then((res) => {
               handleFetchTopics();
+              setIsLoadingTopics(false);
             });
           }}
           handleOption2={() => setIsDeleteClicked(false)}
