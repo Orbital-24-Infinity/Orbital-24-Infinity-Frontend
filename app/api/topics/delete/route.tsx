@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 
 import { checkValidRequest } from "../../authentication/checker";
 
+export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
 export async function DELETE(request: Request) {
