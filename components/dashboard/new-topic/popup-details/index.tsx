@@ -181,7 +181,7 @@ const PopupDetails = ({
               id: newTopic.id,
             },
             topic: {
-              isGenerating: false,
+              isGenerating: true,
               topicID: newTopic.id,
             },
           });
