@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 
 import { checkValidRequest } from "./checker";
 
-const dynamic = "force-dynamic";
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
 interface CheckValidRequestResponse {
   valid: boolean;
 }

@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { checkValidRequest } from "../../authentication/checker";
 import { getDateNow } from "../../login/date";
 
+export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
