@@ -50,12 +50,6 @@ const QuestionComponent = ({
 
   const handleUpdatedSelection = async (newSelection: number) => {
     setSelectedOption(newSelection);
-    console.log(newSelection);
-    // console.log(question, newSelection);
-    // console.log({
-    //   id: question.questionID,
-    //   selected: newSelection,
-    // });
     const out = await fetch("/api/topics/update-selections", {
       method: "POST",
       headers: {
@@ -76,12 +70,10 @@ const QuestionComponent = ({
   };
 
   useEffect(() => {
-    console.log(question);
     setSelectedOption(question.selected);
   }, [question]);
 
   useEffect(() => {
-    // console.log(question);
     if (!isMarked) {
       setIsReferenceShown(false);
     }

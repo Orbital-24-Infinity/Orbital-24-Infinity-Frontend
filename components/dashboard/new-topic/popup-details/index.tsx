@@ -72,7 +72,6 @@ const PopupDetails = ({
         try {
           if (file.type === "text/plain") {
             const text = await file.text();
-            console.log(text);
             setExtractedTexts((prev) => {
               return [...prev, text];
             }); // Store extracted text in state
@@ -212,6 +211,8 @@ const PopupDetails = ({
                 filesToDelete: filesToDelete,
               },
             }),
+          }).then(async (res) => {
+            handleFetchTopics();
           });
         }
       } catch (error) {

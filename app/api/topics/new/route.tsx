@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 
 import { checkValidRequest } from "../../authentication/checker";
 
+export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
@@ -28,17 +29,23 @@ export async function POST(request: Request) {
       },
     });
     if (req.topic.fileData) {
+      const fileRequests: Promise<any>[] = [];
       req.topic.fileData.forEach(async (eachFile: any, index: number) => {
-        await prisma.file.create({
-          data: {
-            topicID: result.id,
-            data: eachFile,
-            name: req.topic.fileName[index],
-          },
-        });
+        fileRequests.push(
+          new Promise((resolve, reject) => {
+            const res = prisma.file.create({
+              data: {
+                topicID: result.id,
+                data: eachFile,
+                name: req.topic.fileName[index],
+              },
+            });
+            resolve(res);
+          })
+        );
+        await Promise.all(fileRequests);
       });
     }
-    // console.log("RESULT", result);
   }
   return NextResponse.json(result);
 }

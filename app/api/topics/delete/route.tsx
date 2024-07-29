@@ -30,20 +30,32 @@ export async function DELETE(request: Request) {
         topicID: topicToDelete!.id,
       },
     });
-    await Promise.all(
-      questions.map(async (each) => {
-        await prisma.questionOptions.deleteMany({
-          where: {
-            questionID: each.id,
-          },
-        });
-        await prisma.question.delete({
-          where: {
-            id: each.id,
-          },
-        });
-      })
-    );
+    const questionsOptionsRequest: Promise<any>[] = [];
+    const questionsRequest: Promise<any>[] = [];
+    questions.map(async (each) => {
+      questionsOptionsRequest.push(
+        new Promise((resolve, reject) => {
+          const res = prisma.questionOptions.deleteMany({
+            where: {
+              questionID: each.id,
+            },
+          });
+          resolve(res);
+        })
+      );
+      questionsRequest.push(
+        new Promise((resolve, reject) => {
+          const res = prisma.question.delete({
+            where: {
+              id: each.id,
+            },
+          });
+          resolve(res);
+        })
+      );
+    });
+    await Promise.all(questionsOptionsRequest);
+    await Promise.all(questionsRequest);
     await prisma.file.deleteMany({
       where: {
         topicID: req.topic.topicID,

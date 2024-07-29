@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma";
 import { checkValidRequest } from "../../authentication/checker";
 import { getDateNow } from "../../login/date";
 
+export const maxDuration = 60;
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
@@ -55,38 +56,57 @@ export async function POST(request: Request) {
         });
 
       if (req.topic.fileData) {
+        const fileRequests: Promise<any>[] = [];
         req.topic.fileData.forEach(async (eachFile: any, index: number) => {
           if (index < req.topic.fileIDs.length) {
-            await prisma.file.update({
-              data: {
-                id: undefined,
-                topicID: undefined,
-                data: eachFile,
-                name: req.topic.fileName[index],
-              },
-              where: {
-                id: req.topic.fileIDs[index],
-              },
-            });
+            fileRequests.push(
+              new Promise((resolve, reject) => {
+                const res = prisma.file.update({
+                  data: {
+                    id: undefined,
+                    topicID: undefined,
+                    data: eachFile,
+                    name: req.topic.fileName[index],
+                  },
+                  where: {
+                    id: req.topic.fileIDs[index],
+                  },
+                });
+                resolve(res);
+              })
+            );
           } else {
-            await prisma.file.create({
-              data: {
-                topicID: req.topic.topicID,
-                data: eachFile,
-                name: req.topic.fileName[index],
-              },
-            });
+            fileRequests.push(
+              new Promise((resolve, reject) => {
+                const res = prisma.file.create({
+                  data: {
+                    topicID: req.topic.topicID,
+                    data: eachFile,
+                    name: req.topic.fileName[index],
+                  },
+                });
+                resolve(res);
+              })
+            );
           }
         });
+
         if (req.topic.filesToDelete) {
           req.topic.filesToDelete.forEach(async (fileID: number) => {
-            await prisma.file.delete({
-              where: {
-                id: fileID,
-              },
-            });
+            fileRequests.push(
+              new Promise((resolve, reject) => {
+                const res = prisma.file.delete({
+                  where: {
+                    id: fileID,
+                  },
+                });
+                resolve(res);
+              })
+            );
           });
         }
+
+        await Promise.all(fileRequests);
       }
     }
   } catch {

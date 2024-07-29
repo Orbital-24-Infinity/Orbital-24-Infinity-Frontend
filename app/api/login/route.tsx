@@ -9,7 +9,8 @@ import prisma from "@/lib/prisma";
 import { AUTH_VALIDITY_IN_DAYS } from "../constants";
 import { getDateNow } from "./date";
 
-const dynamic = "force-dynamic";
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
 
 const checkNewUser = async (email: string): Promise<boolean> => {
   const res = await prisma.user.findFirst({

@@ -8,7 +8,8 @@ import prisma from "@/lib/prisma";
 
 import { getDateNow } from "../login/date";
 
-const dynamic = "force-dynamic";
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
 
 const checkUserExists = async (email: string): Promise<boolean> => {
   return (
