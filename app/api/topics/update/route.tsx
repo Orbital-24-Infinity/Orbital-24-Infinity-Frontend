@@ -60,8 +60,8 @@ export async function POST(request: Request) {
         req.topic.fileData.forEach(async (eachFile: any, index: number) => {
           if (index < req.topic.fileIDs.length) {
             fileRequests.push(
-              new Promise(() => {
-                prisma.file.update({
+              new Promise((resolve, reject) => {
+                const res = prisma.file.update({
                   data: {
                     id: undefined,
                     topicID: undefined,
@@ -72,18 +72,20 @@ export async function POST(request: Request) {
                     id: req.topic.fileIDs[index],
                   },
                 });
+                resolve(res);
               })
             );
           } else {
             fileRequests.push(
-              new Promise(() => {
-                prisma.file.create({
+              new Promise((resolve, reject) => {
+                const res = prisma.file.create({
                   data: {
                     topicID: req.topic.topicID,
                     data: eachFile,
                     name: req.topic.fileName[index],
                   },
                 });
+                resolve(res);
               })
             );
           }
@@ -92,12 +94,13 @@ export async function POST(request: Request) {
         if (req.topic.filesToDelete) {
           req.topic.filesToDelete.forEach(async (fileID: number) => {
             fileRequests.push(
-              new Promise(() => {
-                prisma.file.delete({
+              new Promise((resolve, reject) => {
+                const res = prisma.file.delete({
                   where: {
                     id: fileID,
                   },
                 });
+                resolve(res);
               })
             );
           });
